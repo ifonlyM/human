@@ -16,6 +16,7 @@ public class SeleniumTest {
 	private String url = "http://localhost:8080/board/list";
 	private WebDriver driver;
 	
+	
 	public SeleniumTest() {
 		System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
 		driver = new ChromeDriver();
