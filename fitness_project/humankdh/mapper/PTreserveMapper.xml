@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.kr.humankdh.mapper.PTreserveMapper">
+	<resultMap type="member" id="memberMap">
+		<id property="userid" column="ID"/>
+		<result property="userpw" column="PWD"/>
+		<result property="userName" column="NAME"/>
+		<result property="gender" column="GENDER"/>
+		<result property="phone" column="PHONE"/>
+		<result property="email" column="EMAIL"/>
+		<result property="address" column="ADDRESS"/>
+		<result property="category" column="CATEGORY"/>
+		<result property="rating" column="RATING"/>
+	</resultMap>
+	
+	<select id="getTrainerList" resultMap="memberMap">
+	SELECT *
+	FROM FITNESS_MEMBER
+	WHERE RATING = 3
+	</select>
+	
+	<insert id="insertCareer">
+	INSERT INTO FITNESS_TRAINER_CAREER(CNO, TRAINERID, CAREERNAME, STARTDATE, ENDDATE, COMMENTS) 
+	VALUES(
+		SEQ_CAREER.NEXTVAL, 
+		#{trainerId}, 
+		#{careerName}, 
+		TO_CHAR(TO_DATE(#{startDate}, 'YYYY-MM-DD'), 'YYYY-MM-DD'), 
+		TO_CHAR(TO_DATE(#{endDate}, 'YYYY-MM-DD'), 'YYYY-MM-DD'), 
+		#{comments})
+	</insert>
+	
+	<select id="readComments" resultType="String">
+	SELECT COMMENTS
+	FROM FITNESS_TRAINER_CAREER
+	WHERE TRAINERID = #{id}
+	AND COMMENTS IS NOT NULL
+	AND ROWNUM = 1
+	ORDER BY CNO DESC
+	</select>
+	
+	<select id="getCareers" resultType="career">
+	SELECT * 
+	FROM FITNESS_TRAINER_CAREER
+	WHERE TRAINERID = #{id}
+	ORDER BY CNO
+	</select>
+	
+	<update id="updateCareer">
+	UPDATE FITNESS_TRAINER_CAREER
+	SET
+	CAREERNAME = #{careerName},
+	STARTDATE = TO_CHAR(TO_DATE(#{startDate}, 'YYYY-MM-DD'), 'YYYY-MM-DD'),
+	ENDDATE = TO_CHAR(TO_DATE(#{endDate}, 'YYYY-MM-DD'), 'YYYY-MM-DD')
+	WHERE CNO = #{cno}
+	</update>
+	
+	<delete id="deleteCareer">
+	DELETE FITNESS_TRAINER_CAREER
+	WHERE CNO = #{cno}
+	</delete>
+	
+	<delete id="deleteAllCareer">
+	DELETE FITNESS_TRAINER_CAREER
+	WHERE TRAINERID = #{id}
+	</delete>
+	
+</mapper>

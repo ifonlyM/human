@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.kr.humankdh.mapper.BlackListMapper">
+
+	<insert id="insert">
+		INSERT INTO FITNESS_BLACKLIST_MEMBER(BLACKNO, ID, START_DATE, END_DATE, TERM, RESSON)
+		VALUES(SEQ_FITNESS_BLACKLIST.NEXTVAL, #{id}, #{start_date},#{end_date},#{term},#{resson})
+	</insert>
+	
+	<insert id="insertSelectKey">
+		<selectKey order="BEFORE" keyProperty="blackno" resultType="long">
+			SELECT SEQ_FITNESS_BLACKLIST.NEXTVAL FROM DUAL
+		</selectKey>
+		
+		INSERT INTO FITNESS_BLACKLIST_MEMBER(BLACKNO, ID, START_DATE, END_DATE, TERM, RESSON)
+		VALUES(#{blackno}, #{id}, #{start_date},#{end_date},#{term},#{resson})
+	</insert>
+	
+
+	<delete id="delete">
+		DELETE FROM FITNESS_BLACKLIST_MEMBER WHERE BLACKNO = #{blackno}
+	</delete>
+
+
+
+
+
+	<select id="getList" resultType="blacklist">
+		SELECT * FROM FITNESS_BLACKLIST_MEMBER WHERE BLACKNO > 0
+	</select>
+	
+	<select id="getListWithPaging" resultType="blacklist">
+        SELECT BLACKNO, ID, START_DATE, END_DATE, TERM, RESSON
+      FROM
+      (
+
+          SELECT
+             /*+ INDEX_DESC(FITNESS_BLACKLIST_MEMBER PK_BLACKLIST) */
+             ROWNUM RN, BLACKNO, ID, START_DATE, END_DATE, TERM, RESSON
+         FROM 
+            FITNESS_BLACKLIST_MEMBER
+          WHERE 
+          <include refid="cri" />
+             ROWNUM &lt;= #{pageNum} * #{amount}
+      )
+      WHERE RN > (#{pageNum}-1) * #{amount}
+     </select>
+     
+      <select id="getTotalCount" resultType="int">
+      SELECT COUNT(*) FROM FITNESS_BLACKLIST_MEMBER WHERE 
+      <include refid="cri" />
+      BLACKNO > 0
+   </select>
+   
+   
+  <sql id="cri">
+        <trim prefix="(" suffix=") AND" prefixOverrides="OR">
+           <foreach collection="typeArr" item="type">
+              <trim prefix="OR">
+                 <choose>
+                    <when test="type == 'I'.toString()">
+                       ID LIKE '%'||#{keyword}||'%'
+                    </when>
+                    <when test="type == 'T'.toString()">
+                       TERM LIKE '%${keyword}%'
+                    </when>
+                    <when test="type == 'S'.toString()">
+                       START_DATE LIKE '%${keyword}%'
+                    </when>
+                    <when test="type == 'E'.toString()">
+                       END_DATE LIKE '%'||#{keyword}||'%'
+                    </when>
+                    <when test="type == 'R'.toString()">
+                       RESSON LIKE '%${keyword}%'
+                    </when>
+                    
+                 </choose>
+              </trim>
+           </foreach>
+          </trim>   
+        </sql>
+   
+	
+	
+</mapper>

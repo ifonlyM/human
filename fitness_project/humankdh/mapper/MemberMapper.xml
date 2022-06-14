@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.kr.humankdh.mapper.MemberMapper">
+
+
+	<resultMap type="member" id="memberMap">
+		<id property="userid" column="ID"/>
+		<result property="userpw" column="PWD"/>
+		<result property="userName" column="NAME"/>
+		<result property="phone" column="PHONE"/>
+		<result property="gender" column="GENDER"/>
+		<result property="email" column="EMAIL"/>
+		<result property="enabled" column="enabled"/>
+		<result property="height" column="HEIGHT"/>
+		<result property="weight" column="WEIGHT"/>
+		<result property="address" column="ADDRESS"/>
+		<result property="category" column="CATEGORY"/>
+		<result property="rating" column="RATING"/>
+		<result property="auth" column="auth"/>
+		<collection property="auths" resultMap="authMap"/>
+	</resultMap>
+	
+	<resultMap type="auth" id="authMap">
+		<result property="userid" column="userid"/>
+		<result property="auth" column="authority"/>
+	</resultMap>
+	
+	<!-- 아이디 찾기 -->
+	<select id="findId">
+	SELECT ID FROM FITNESS_MEMBER WHERE ID = #{userid}
+	</select>
+	
+	<select id="memberLogin" resultType="int">
+	SELECT COUNT(*) FROM FITNESS_MEMBER WHERE ID = #{userid} AND PWD = #{userpw}
+	</select>
+	
+	<select id="findBNObyALL" resultType="int">
+	SELECT BNO FROM FITNESS_BOARD WHERE WRITER = #{userid}
+	</select>
+	
+	<delete id="deletereplyAll" >
+		DELETE FROM FITNESS_REPLY WHERE BNO = #{bno}
+	</delete>
+	
+	
+	<insert id="insertMember">
+	INSERT INTO FITNESS_MEMBER(ID, PWD, NAME, GENDER, PHONE, EMAIL) VALUES(#{userid}, #{userpw}, #{userName}, #{gender}, #{phone}, #{email})
+	</insert>	
+	
+	<insert id="insertAuth">
+	INSERT INTO FITNESS_AUTH VALUES(#{userid}, #{auth})
+	</insert>
+	
+	<insert id="insertAuthByAdmin">
+	INSERT INTO FITNESS_AUTH VALUES(#{userid}, #{auth})
+	</insert>
+
+	<insert id="insertMemberbyAdmin">
+	INSERT INTO FITNESS_MEMBER(ID, PWD, NAME, GENDER, PHONE, EMAIL, ADDRESS, HEIGHT, WEIGHT,RATING) VALUES(#{userid}, #{userpw}, #{userName}, #{gender}, #{phone}, #{email}, #{address}, #{height}, #{weight}, #{rating})
+	</insert>
+	
+	<delete id="delete" >
+		DELETE FROM FITNESS_MEMBER WHERE ID = #{id}
+	</delete>
+	<delete id="authdeletebyAdmin" >
+		DELETE FROM FITNESS_AUTH WHERE ID = #{id}
+	</delete>
+	
+	<delete id="deleteboardAll" >
+		DELETE FROM FITNESS_BOARD WHERE WRITER = #{id}
+	</delete>
+	
+	<update id="update" >
+		UPDATE FITNESS_MEMBER SET
+		PWD = #{userpw},
+		NAME = #{userName},
+		PHONE = #{phone},
+		EMAIL = #{email},
+		ADDRESS = #{address},
+		HEIGHT = #{height},
+		WEIGHT = #{weight},
+		RATING = #{rating},
+		GENDER = #{gender}
+		WHERE ID = #{userid}
+		
+		
+	</update>
+	
+	<update id="authupdate" >
+		UPDATE FITNESS_AUTH SET
+		AUTHORITY = #{auth}
+		WHERE ID = #{userid}
+	</update>
+	
+	<select id="idChk" resultType="int">
+	SELECT COUNT(*) FROM FITNESS_MEMBER WHERE ID = #{id}
+	</select>
+
+	<select id="read" resultMap="memberMap">
+	 SELECT *
+	FROM FITNESS_MEMBER
+	LEFT JOIN FITNESS_AUTH
+	USING(ID)
+	WHERE ID = #{id}
+	</select>
+	
+	<select id="getList" resultType="member">
+		SELECT * FROM FITNESS_MEMBER
+	</select>
+	
+	<select id="getListWithPaging" resultType="member" resultMap="memberMap">
+        SELECT ID, PWD, NAME, GENDER, PHONE, HEIGHT, WEIGHT, ADDRESS, EMAIL, CATEGORY, RATING
+      FROM
+      (
+
+          SELECT
+             /*+ INDEX_DESC(FITNESS_MEMBER PK_MEMBER) */
+             ROWNUM RN, ID, PWD, NAME, GENDER, PHONE, HEIGHT, WEIGHT, ADDRESS, EMAIL, CATEGORY, RATING
+         FROM 
+            FITNESS_MEMBER
+          WHERE 
+          <include refid="cri" />
+             ROWNUM &lt;= #{pageNum} * #{amount}
+      )
+      WHERE RN > (#{pageNum}-1) * #{amount}
+     </select>
+		<select id="getTotalCount" resultType="int">
+	      SELECT COUNT(*) FROM FITNESS_MEMBER  WHERE
+	      <include refid="cri" />
+	      ROWNUM>0
+	     
+	   </select>
+	   
+	   <sql id="cri">
+        <trim prefix="(" suffix=") AND" prefixOverrides="OR">
+           <foreach collection="typeArr" item="type">
+              <trim prefix="OR">
+                 <choose>
+                    <when test="type == 'I'.toString()">
+                       ID LIKE '%'||#{keyword}||'%'
+                    </when>
+                    <when test="type == 'N'.toString()">
+                       NAME LIKE '%'||#{keyword}||'%'
+                    </when>
+                    <when test="type == 'G'.toString()">
+                       GENDER LIKE '%'||#{keyword}||'%'
+                    </when>
+                    <when test="type == 'P'.toString()">
+                       PHONE LIKE '%'||#{keyword}||'%'
+                    </when>
+                    <when test="type == 'E'.toString()">
+                       EMAIL LIKE '%'||#{keyword}||'%'
+                    </when>
+                    <when test="type == 'C'.toString()">
+                       CATEGORY LIKE'%'||#{keyword}||'%''
+                    </when>
+                    <when test="type == 'R'.toString()">
+                       RATING LIKE '%'||#{keyword}||'%'
+                    </when>
+                    <when test="type == 'E'.toString()">
+                       EMAIL LIKE '%'||#{keyword}||'%'
+                    </when>
+                    
+                 </choose>
+              </trim>
+           </foreach>
+          </trim>   
+        </sql>
+
+</mapper>
+

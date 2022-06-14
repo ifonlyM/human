@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.kr.humankdh.mapper.SalesMapper">
+
+	<select id="getSalesListby" resultType="map">
+				SELECT MONTH, NVL(SALES,0) SALES
+				FROM
+				
+				(SELECT TO_NUMBER(TO_CHAR(BUYDATE,'MM')) MONTH,SUM(COST) SALES
+				FROM FITNESS_SALES
+				WHERE TO_CHAR(BUYDATE,'YYYY')= #{year}
+				GROUP BY TO_NUMBER(TO_CHAR(BUYDATE,'MM')))A
+				RIGHT JOIN
+				(SELECT ROWNUM  MONTH
+				FROM DICT
+				WHERE ROWNUM &lt;=12)B
+				USING(MONTH)
+				ORDER BY 1
+	
+	
+	</select>
+	
+
+	<insert id="insert">
+		INSERT INTO FITNESS_SALES(SNO, ID, NAME, COST, BUYDATE, TRAINER, BUYCONTENT, PAYMENT)
+		VALUES(SEQ_FITNESS_SALES.NEXTVAL, #{id}, #{name},#{cost},#{buydate},#{trainer},#{buycontent},#{payment})
+	</insert>
+	
+	<insert id="insertSelectKey">
+		<selectKey order="BEFORE" keyProperty="sno" resultType="long">
+			SELECT SEQ_FITNESS_SALES.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO FITNESS_SALES(SNO, ID, NAME, COST, BUYDATE, TRAINER, BUYCONTENT, PAYMENT)
+		VALUES(#{sno},#{id},#{name},#{cost},#{buydate},#{trainer},#{buycontent},#{payment})
+	</insert>
+	
+	<select id="read" resultType="sales">
+		SELECT * FROM FITNESS_SALES WHERE SNO = #{sno}
+	</select>
+	
+	<delete id="delete">
+		DELETE FROM FITNESS_SALES WHERE SNO = #{sno}
+	</delete>
+	
+	<update id="update">
+		UPDATE FITNESS_SALES SET
+		ID = #{id},
+		NAME = #{name},
+		COST = #{cost},
+		BUYDATE = #{buydate},
+		TRAINER = #{trainer},
+		BUYCONTENT = #{buycontent},
+		PAYMENT = #{payment}
+		WHERE SNO = #{sno}
+	</update>
+	<select id="getList" resultType="sales">
+		SELECT * FROM FITNESS_SALES WHERE SNO > 0
+	</select>
+	
+	<select id="getListWithPaging" resultType="sales">
+        SELECT SNO, ID, NAME, COST, BUYDATE, TRAINER, BUYCONTENT, PAYMENT
+      FROM
+      (
+
+          SELECT
+             /*+ INDEX_DESC(FITNESS_SALES PK_SALES) */
+             ROWNUM RN, SNO, ID, NAME, COST, BUYDATE, TRAINER, BUYCONTENT, PAYMENT
+         FROM 
+            FITNESS_SALES
+          WHERE 
+          <include refid="cri" />
+             ROWNUM &lt;= #{pageNum} * #{amount}
+      )
+      WHERE RN > (#{pageNum}-1) * #{amount}
+     </select>
+     
+      <select id="getTotalCount" resultType="int">
+      SELECT COUNT(*) FROM FITNESS_SALES WHERE 
+      <include refid="cri" />
+      SNO > 0
+   </select>
+   
+   
+  <sql id="cri">
+        <trim prefix="(" suffix=") AND" prefixOverrides="OR">
+           <foreach collection="typeArr" item="type">
+              <trim prefix="OR">
+                 <choose>
+                    <when test="type == 'I'.toString()">
+                       ID LIKE '%'||#{keyword}||'%'
+                    </when>
+                    <when test="type == 'N'.toString()">
+                       NAME LIKE '%${keyword}%'
+                    </when>
+                    <when test="type == 'C'.toString()">
+                       COST LIKE '%${keyword}%'
+                    </when>
+                    <when test="type == 'D'.toString()">
+                       BUYDATE LIKE '%'||#{keyword}||'%'
+                    </when>
+                    <when test="type == 'T'.toString()">
+                       TRAINER LIKE '%${keyword}%'
+                    </when>
+                    <when test="type == 'B'.toString()">
+                       BUYCONTENT LIKE '%${keyword}%'
+                    </when>
+                    <when test="type == 'P'.toString()">
+                       PAYMENT LIKE '%${keyword}%'
+                    </when>
+                 </choose>
+              </trim>
+           </foreach>
+          </trim>   
+        </sql>
+   
+	
+	
+</mapper>

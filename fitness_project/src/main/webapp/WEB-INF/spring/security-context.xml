@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+		<bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" id="BCryptPasswordEncoder"></bean>
+		<bean id="customAccessDenied" class="co.kr.humankdh.security.CustomAccessDeniedHandler"></bean>
+
+	<security:http>
+		<security:form-login login-page="/common/login"/>
+		<security:logout logout-url="/logout" logout-success-url="/common/login"/>
+		 
+		<!-- 모든사용자 가능 -->
+		<security:intercept-url pattern="/common/index" access="permitAll"/>
+		<security:intercept-url pattern="/common/login" access="permitAll"/>
+		<security:intercept-url pattern="/board/get" access="permitAll"/>
+		<security:intercept-url pattern="/board/register" access="permitAll"/>
+		<security:intercept-url pattern="/board/notice_list" access="permitAll"/>
+		<security:intercept-url pattern="/board/free_list" access="permitAll"/>
+		<security:intercept-url pattern="/board/record_list" access="permitAll"/>
+		<security:intercept-url pattern="/board/video_list" access="permitAll"/>
+		<security:intercept-url pattern="/board/register?category=2" access="permitAll"/>
+		<security:intercept-url pattern="/board/modify?category=2" access="permitAll"/>
+		
+		
+		<!-- 정회원 이상 가능 -->
+		<security:intercept-url pattern="/PTreserve/trainers" access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/PTreserve/calendar" access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/board/register?category=3 " access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/board/modify?category=3" access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/board/register?category=5" access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/board/modify?category=5" access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>
+		
+		<!-- 트레이너 이상 가능 -->
+		<security:intercept-url pattern="/board/register?category=4" access="hasAnyRole('ROLE_TRAINER, ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/board/modify?category=4" access="hasAnyRole('ROLE_TRAINER, ROLE_ADMIN')"/>
+		
+		<!-- 관리자 이상 가능 -->
+		<security:intercept-url pattern="/AdminServe/memberInquiry " access="hasAnyRole('ROLE_TRAINER ,ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/AdminServe/salesInquiry " access="hasAnyRole('ROLE_TRAINER ,ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/AdminServe/boardList " access="hasAnyRole('ROLE_TRAINER ,ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/AdminServe/blackList " access="hasAnyRole('ROLE_TRAINER ,ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/PTreserve/careerWrite " access="hasAnyRole('ROLE_TRAINER ,ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/board/register?category=1" access="hasAnyRole('ROLE_TRAINER, ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/board/modify?category=1" access="hasAnyRole('ROLE_TRAINER, ROLE_ADMIN')"/>
+ 
+		<security:remember-me data-source-ref="dataSource" token-validity-seconds="18000"/>
+		 
+		<security:access-denied-handler error-page="/common/accessError"/>
+		<!-- <security:access-denied-handler ref="customAccessDenied"/> -->
+		<security:headers>
+			<security:frame-options policy="SAMEORIGIN"/>
+		</security:headers>
+		
+	</security:http>
+	
+	<security:authentication-manager>
+		<security:authentication-provider user-service-ref="customUserDetailsService">
+				
+			<!-- 비밀번호 암호화 -->
+			<security:password-encoder ref="BCryptPasswordEncoder"/>
+			
+			<!-- <security:jdbc-user-service data-source-ref="dataSource"/> -->
+		</security:authentication-provider>
+	</security:authentication-manager>
+
+</beans>
