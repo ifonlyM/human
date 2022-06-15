@@ -11,8 +11,8 @@ $(function() {
 	var contextPath = sessionStorage.getItem("contextPath");
 	var positions = [];
 	var currPos = 0;
+	
 	// 트레이너들과 경력들을 맵형태로 가져옴 ==========================================================
-	//var url = contextPath + "/common/getTrainers";
 	var url = contextPath + "/PTreserve/getTrainers";
 	$.ajax( url, {
 		type: "POST",
