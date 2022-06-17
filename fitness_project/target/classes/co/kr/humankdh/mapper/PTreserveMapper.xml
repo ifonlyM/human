@@ -3,6 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="co.kr.humankdh.mapper.PTreserveMapper">
+
 	<resultMap type="member" id="memberMap">
 		<id property="userid" column="ID"/>
 		<result property="userpw" column="PWD"/>
@@ -66,5 +67,17 @@
 	DELETE FITNESS_TRAINER_CAREER
 	WHERE TRAINERID = #{id}
 	</delete>
+	
+	<insert id="insertPT">
+	INSERT INTO FITNESS_PT_RESERVE(RESERVE_NO, T_ID, M_ID, RESERVE_DATE, START_TIME, END_TIME)
+	VALUES(
+	SEQ_RESERVE.NEXTVAL,
+	#{trainerId},
+	#{memberId},
+	TO_CAHR(TO_DATE(#{reserveDate}, 'YYYY-MM-DD'), 'YYYY-MM-DD'),
+	TO_CHAR(TO_DATE(#{startTime}, 'HH24:MI'), 'HH24:MI'),
+	TO_CHAR(TO_DATE(#{endTime}, 'HH24:MI'), 'HH24:MI')
+	)
+	</insert>
 	
 </mapper>

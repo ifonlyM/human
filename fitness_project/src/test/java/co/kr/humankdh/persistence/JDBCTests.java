@@ -22,9 +22,9 @@ public class JDBCTests {
 	@Test
 	public void testConnection() {
 		try(Connection conn =
-				DriverManager.getConnection("jdbc:oracle:thin:@db.humankdh.co.kr:1521:XE",
-						"FITNESS",
-						"FITNESS")) {
+				DriverManager.getConnection("jdbc:oracle:thin:@db.ifonlygaram.net:1521:XE",
+						"SPRINGTEAM",
+						"SPRINGTEAM")) {
 			log.info(conn);
 		} catch (Exception e) {
 			fail(e.getMessage());

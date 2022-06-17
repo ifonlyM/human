@@ -33,6 +33,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js" integrity="sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="${pageContext.request.contextPath }/resources/js/ckeditor/ckeditor.js"></script>
+    
+    <!-- js 파일에서는 jsp의 contextPath 관련 가져오기 기능이 작동 안하므로 sessionStorage에 contextPath값을 저장하여 쓰게함  -->
+    <script type="text/javascript" charset="utf-8">
+		sessionStorage.setItem("contextPath", "${pageContext.request.contextPath}");
+	</script>
    
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
