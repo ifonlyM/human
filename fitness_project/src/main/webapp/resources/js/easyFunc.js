@@ -29,3 +29,9 @@ function isRightButton(e){
 		return true;
 	}
 }
+
+// css seconds(0.3s)를 ms(300)로 변환
+function css_seconds_to_milliSeconds(css_seconds) {
+	css_seconds = css_seconds.replace("s", "");
+	return css_seconds * 1000;
+}

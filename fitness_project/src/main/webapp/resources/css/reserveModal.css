@@ -1,0 +1,77 @@
+@CHARSET "UTF-8";
+.tModal-overlay {
+    visibility: hidden;
+    opacity: 0.0;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(1.5px);
+    z-index: 5;
+    transition: all 0.3s;
+}
+.open-modal{
+	visibility: visible;
+	opacity: 1.0;
+}
+#tModal .tModal-window {
+    background: rgba( 255, 255, 255 );
+    backdrop-filter: blur( 13.5px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+    position: relative;
+    top: 0px;
+    padding: 10px;
+    padding-right: 0px;
+}
+#tModal .tModal-title {
+	padding-top: 10px;
+	text-align: center;
+    color: black;
+}
+
+#tModal .tModal-content {
+    margin-top: 20px;
+    padding: 0 10px;
+    color: black;
+}
+
+#tModal .tModal-thead {
+	text-align: center;
+}
+
+#tModal .tModal-tbody {
+	display: block;
+	height: 300px;	
+	overflow-y: scroll;
+}
+
+#tModal .tModal-input {
+	margin-top: 10px;	
+	margin-right: 10px;
+	width: 15vw;
+}
+
+#tModal .tModal-h4 {
+	margin: 10px;
+}
+
+#tModal .tModal-tfoot {
+	text-align: center;
+}
+
+#tModal .tModal-tfoot button {
+	width: 100px;
+	margin: 10px;
+}
+
+.hide-scroll{
+	overflow: hidden;
+	scroll: no;
+}

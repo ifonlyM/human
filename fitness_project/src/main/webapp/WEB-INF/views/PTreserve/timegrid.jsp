@@ -1,72 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<style>
-#tModal.tModal-overlay {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    left: 0;
-    top: 0; 
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(1.5px);
-    z-index: 5;
-}
-#tModal .tModal-window {
-    background: rgba( 255, 255, 255 );
-    backdrop-filter: blur( 13.5px );
-    border-radius: 10px;
-    border: 1px solid rgba( 255, 255, 255, 0.18 );
-    position: relative;
-    top: 0px;
-    padding: 10px;
-    padding-right: 0px;
-}
-#tModal .tModal-title {
-	padding-top: 10px;
-	text-align: center;
-    color: black;
-}
-
-#tModal .tModal-content {
-    margin-top: 20px;
-    padding: 0 10px;
-    color: black;
-}
-
-#tModal .tModal-thead {
-	text-align: center;
-}
-
-#tModal .tModal-tbody {
-	display: block;
-	height: 300px;	
-	overflow-y: scroll;
-}
-
-#tModal .tModal-input {
-	margin-top: 10px;	
-	margin-right: 10px;
-}
-
-#tModal .tModal-h4 {
-	margin: 10px;
-}
-
-#tModal .tModal-tfoot {
-	text-align: center;
-}
-
-#tModal .tModal-tfoot button {
-	width: 100px;
-	margin: 10px;
-}
-
-</style>
-
 <!-- 예약 상세 모달창  -->
 <div id="tModal" class="tModal-overlay">
 	<div class="tModal-window">
@@ -97,8 +30,8 @@
         			<tr><td><h4 class="tModal-h4">예약시간을 선택해주세요</h4></td></tr>
         			<tr>
         				<td>
-        					<button class="btn btn-default btn-sm">선택</button>
-        					<button class="btn btn-primary btn-sm">취소</button>
+        					<button class="btn btn-default btn-sm modal-select">선택</button>
+        					<button type="button" class="btn btn-primary btn-sm modal-close">취소</button>
         				</td>
         			</tr>
         		</tfoot>
@@ -112,7 +45,5 @@
 		$(".tModal-table").find("tr").addClass("tModal-tr");
 		$(".tModal-table").find("td").addClass("tModal-td");
 		$(".tModal-tbody").find("input").addClass("tModal-input");
-		
-		
 	})
 </script>

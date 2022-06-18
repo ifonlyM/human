@@ -356,36 +356,6 @@
 	        	
             }// END of MODAL script
             
-            // PT 예약하기
-            $(".reserve").click(function(){
-            	if(!reserve.startTime) {
-            		alert("예약 시간을 선택 해주세요!");
-            		return;
-            	}
-            	if(!confirm(
-            			"예약정보를 확인 해주세요.\n"+
-            			"담당 트레이너 : " + "${param.trainerName}\n"+
-            			"예약 날짜 : " + reserve.reserveDate + "\n"+
-            			"예약 시간 : " + reserve.startTime + "\n"
-            			)){
-            		return;
-            	}
-            	
-            	var url = contextPath = "/PTreserve/reservePT";
-            	$.ajax(url, {
-            		type : "POST",
-            		data : JSON.stringify(reserve),
-            		contentType : 'application/json; charset=utf-8',
-            		dataType : "text",
-            		success : function(result) {
-            			alert(result);
-            		},
-            		error : function() {
-            			alert("failed reservePT ajax communication");
-            		}
-            	});
-            });
-            
         });// END of Ready
     </script>
 </body>
