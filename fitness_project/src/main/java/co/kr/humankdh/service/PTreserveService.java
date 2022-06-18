@@ -3,6 +3,7 @@ package co.kr.humankdh.service;
 import java.util.List;
 
 import co.kr.humankdh.domain.MemberVo;
+import co.kr.humankdh.domain.ReserveVo;
 import co.kr.humankdh.domain.TrainerCareerVo;
 
 public interface PTreserveService {
@@ -26,4 +27,7 @@ public interface PTreserveService {
 	
 	// 트레이너 경력 모두 삭제
 	void deleteAllCareer(String id);
+	
+	// PT예약 시간 입력
+	boolean insertPT(ReserveVo vo);
 }

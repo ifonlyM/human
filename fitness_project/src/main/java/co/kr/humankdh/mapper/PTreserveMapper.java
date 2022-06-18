@@ -30,4 +30,7 @@ public interface PTreserveMapper {
 	
 	// 트레이너 pt 예약
 	void insertPT(ReserveVo vo);
+	
+	// 이미 예약된 시간인지 조회(트레이너 id, 예약 날짜, 예약 시간)
+	boolean hasReserve(ReserveVo vo);
 }

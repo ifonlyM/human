@@ -74,10 +74,38 @@
 	SEQ_RESERVE.NEXTVAL,
 	#{trainerId},
 	#{memberId},
-	TO_CAHR(TO_DATE(#{reserveDate}, 'YYYY-MM-DD'), 'YYYY-MM-DD'),
-	TO_CHAR(TO_DATE(#{startTime}, 'HH24:MI'), 'HH24:MI'),
-	TO_CHAR(TO_DATE(#{endTime}, 'HH24:MI'), 'HH24:MI')
+	TO_DATE(#{reserveDate}, 'YYYY-MM-DD'),
+	TO_DATE(#{reserveDate}||' '||#{startTime}, 'YYYY-MM-DD HH24:MI'),
+	NVL2(#{endTime, jdbcType=DATE}, TO_DATE(#{reserveDate}||' '||#{endTime, jdbcType=DATE}, 'YYYY-MM-DD HH24:MI'), NULL)
+	
+	<!-- 
+	정상적으로 작동 하지만 가독성이 안좋음
+	<choose>
+	<when test="endTime!=null and !endTime.equals('')">
+	TO_DATE(#{reserveDate}||' '||#{endTime}, 'YYYY-MM-DD HH24:MI')
+	</when>
+	<otherwise>
+	NULL	
+	</otherwise>
+	</choose> 
+	-->
+	
+	<!--
+	변수에 ',jdbcType=DATE'를 해줘야 값이 null 일때 NVL2 작동함
+	mybatis configuration 을 통해서 jdbcTypeforNull 옵션을 설정하면 아래 방식으로도 가능하다고 함 	
+	NVL2(#{endTime}, TO_DATE(#{reserveDate}||' '||#{endTime}, 'YYYY-MM-DD HH24:MI'), NULL) 
+	-->
 	)
 	</insert>
+	
+	<select id="hasReserve" resultType="boolean">
+	SELECT COUNT(*) 
+	FROM FITNESS_PT_RESERVE 
+	WHERE 
+		RESERVE_DATE = TO_DATE(#{reserveDate},'YYYY-MM-DD') 
+		AND START_TIME = TO_DATE(#{reserveDate}||' '||#{startTime}, 'YYYY-MM-DD HH24:MI') 
+		AND T_ID = #{trainerId} 
+		AND ROWNUM = 1
+	</select>
 	
 </mapper>

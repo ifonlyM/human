@@ -8,7 +8,7 @@ import lombok.Data;
 public class ReserveVo {
 	private Long rno;
 	private String trainerId;
-	private String memeberId;
+	private String memberId;
 	private String reserveDate;
 	private String startTime;
 	private String endTime;

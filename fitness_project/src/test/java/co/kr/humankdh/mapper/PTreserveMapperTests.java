@@ -63,11 +63,22 @@ public class PTreserveMapperTests {
 	public void testInsertPT() {
 		ReserveVo vo = new ReserveVo();
 		vo.setTrainerId("hcs");
-		vo.setMemeberId("wkqkaos123");
+		vo.setMemberId("wkqkaos123");
 		vo.setReserveDate("2022-06-15");
-		vo.setStartTime("10:00");
-		vo.setEndTime("11:00");
+		vo.setStartTime("11:00");
+//		vo.setEndTime("11:00");
 		ptMapper.insertPT(vo);
+	}
+	
+	@Test
+	public void testSelectPT() {
+		ReserveVo vo = new ReserveVo();
+		vo.setTrainerId("hcs");
+		vo.setMemberId("wkqkaos123");
+		vo.setReserveDate("2022-06-15");
+		vo.setStartTime("10:01");
+		boolean hasReserve = ptMapper.hasReserve(vo);
+		log.info(hasReserve);
 	}
 	
 }

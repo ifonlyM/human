@@ -4,25 +4,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import co.kr.humankdh.domain.MemberVo;
+import co.kr.humankdh.domain.ReserveVo;
 import co.kr.humankdh.domain.TrainerCareerVo;
 import co.kr.humankdh.service.PTreserveService;
 import lombok.AllArgsConstructor;
@@ -45,13 +39,19 @@ public class PT_ReserveController {
 		log.info(trainerId);
 	}
 	
+	@GetMapping(value="myCalendar")
+	public void myCalendar(String userId) {
+		
+	}
+	
 	@GetMapping("trainers")
 	public void trainers() {
 		log.info("trainers");
 	}
 	
 	
-	@ResponseBody @PostMapping(value="getTrainers")
+	@PostMapping(value="getTrainers")
+	@ResponseBody 
 	public Map<String, List<TrainerCareerVo>> getTrainers(){
 		List<MemberVo> trainers = service.getTrainerList();
 		Map<String, List<TrainerCareerVo>> careers = new HashMap<>(); 	// 트레이너, 커리어리스트
@@ -81,7 +81,8 @@ public class PT_ReserveController {
 		model.addAttribute("list", service.getTrainerList());
 	}
 	
-	@ResponseBody @PostMapping("careerWrite")
+	@PostMapping("careerWrite")
+	@ResponseBody 
 	public String careerWrite(@RequestBody List<TrainerCareerVo> list) {
 		if(!list.isEmpty()){
 			list.forEach(service::insertCareer);
@@ -91,33 +92,38 @@ public class PT_ReserveController {
 		return "default";
 	}
 	
-	@ResponseBody @PostMapping("getCareers")
+	@PostMapping("getCareers")
+	@ResponseBody 
 	public List<TrainerCareerVo> getCareers(@RequestBody String id) {
 		log.info(id);
 		return service.getCareers(id);
 	}
 	
 	// 한글이 깨지는 현상 때문에 produces를 설정, 데이터를 보낼때 인코딩해서 보내야함
-	@ResponseBody @PostMapping(value="getComments", produces="text/plain; charset=utf-8")
+	@PostMapping(value="getComments", produces="text/plain; charset=utf-8")
+	@ResponseBody 
 	public String getComments(@RequestBody String id) {
 		return service.getLastComments(id);
 	}
 	
-	@ResponseBody @PostMapping(value="updateCareer", produces="text/plain; charset=utf-8")
+	@PostMapping(value="updateCareer", produces="text/plain; charset=utf-8")
+	@ResponseBody 
 	public String updateCareer(@RequestBody TrainerCareerVo vo){
 		log.info(vo);
 		service.updateCareer(vo);
 		return "수정되었습니다";
 	}
 	
-	@ResponseBody @PostMapping(value="deleteCareer", produces="text/plain; charset=utf-8")
+	@PostMapping(value="deleteCareer", produces="text/plain; charset=utf-8")
+	@ResponseBody 
 	public String deleteCareer(@RequestBody Long cno){
 		log.info(cno);
 		service.deleteCareer(cno);
 		return "삭제되었습니다";
 	}
 	
-	@ResponseBody @PostMapping(value="deleteAllCareer", produces="text/plain; charset=utf-8")
+	@PostMapping(value="deleteAllCareer", produces="text/plain; charset=utf-8")
+	@ResponseBody 
 	public String deleteAllCareer(@RequestBody String id){
 		log.info(id);
 		List<TrainerCareerVo> list = service.getCareers(id);
@@ -127,6 +133,18 @@ public class PT_ReserveController {
 		else {
 			service.deleteAllCareer(id);
 			return "모두 삭제되었습니다";
+		}
+	}
+	
+	@PostMapping(value="reservePT", produces="text/plain; charset=utf-8")
+	@ResponseBody
+	public String reservePT(@RequestBody ReserveVo vo){
+		log.info(vo);
+		if(service.insertPT(vo)){
+			return "예약을 완료했습니다.";
+		}
+		else {
+			return "실패 : 다른 시간을 이용해주세요.";
 		}
 	}
 

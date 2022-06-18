@@ -286,7 +286,7 @@
 					getBackInputForm(tr);
 				},
 				error : function() {
-					alert("failed updateCareer ajax communication")
+					alert("failed updateCareer ajax communication");
 				}
 			});
 		});

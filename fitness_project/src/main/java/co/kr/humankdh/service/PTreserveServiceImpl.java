@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import co.kr.humankdh.domain.MemberVo;
+import co.kr.humankdh.domain.ReserveVo;
 import co.kr.humankdh.domain.TrainerCareerVo;
 import co.kr.humankdh.mapper.PTreserveMapper;
 import lombok.AllArgsConstructor;
@@ -46,8 +47,18 @@ public class PTreserveServiceImpl implements PTreserveService{
 
 	@Override
 	public void deleteAllCareer(String id) {
-		// TODO Auto-generated method stub
 		mapper.deleteAllCareer(id);
+	}
+
+	@Override
+	public boolean insertPT(ReserveVo vo) {
+		if(!mapper.hasReserve(vo)){
+			mapper.insertPT(vo);
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	
