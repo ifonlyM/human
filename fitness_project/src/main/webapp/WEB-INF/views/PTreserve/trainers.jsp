@@ -267,7 +267,6 @@
 			console.log($(this).data("trainer"));
 			// 해당 트레이너의 예약 페이지로 이동
 			location.href = contextPath + "/PTreserve/calendar?trainerName=" + $(this).data("trainer");
-			
 		});
     	
     }); // END of Ready

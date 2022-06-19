@@ -52,6 +52,17 @@
 		<security:headers>
 			<security:frame-options policy="SAMEORIGIN"/>
 		</security:headers>
+				
+		
+		
+		<!--세션 관련 설정 
+			invalid-session-url : 세션이 유효하지 않을때 호출되는 url 
+			invalid-session-strategy-ref : 비유효 세션일때 해당 클래스를 호출하여 대신 처리		
+		-->
+		<security:session-management invalid-session-strategy-ref="customInvalidSessionStrategy">
+			<!-- 세션만료시 호출되는 url  -->
+			<security:concurrency-control expired-url="/common/login" />
+		</security:session-management>
 		
 	</security:http>
 	

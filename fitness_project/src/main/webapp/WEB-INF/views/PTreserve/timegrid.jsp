@@ -14,23 +14,15 @@
         			</tr>
         		</thead> -->
         		<tbody class="tModal-tbody">
-					<c:forEach var="i" begin="0" end="1">
-					<tr><td><input type="button" value="${i+10}:00"></td></tr>
-        			<%-- <tr><td><input type="button" value="${i+10}:30"></td></tr> --%>
+					<c:forEach var="i" begin="10" end="21">
+					<tr><td><input type="button" value="${i}:00"></td></tr>
 					</c:forEach>
-					
-					<c:forEach var="i" begin="0" end="7">
-					<tr><td><input type="button" value="${i+13}:00"></td></tr>
-        			<%-- <tr><td><input type="button" value="${i+13}:30"></td></tr> --%>
-					</c:forEach>
-					
-        			<tr><td><input type="button" value="21:00"></td></tr>
         		</tbody>
         		<tfoot class="tModal-tfoot">
         			<tr><td><h4 class="tModal-h4">예약시간을 선택해주세요</h4></td></tr>
         			<tr>
         				<td>
-        					<button class="btn btn-default btn-sm modal-select">선택</button>
+        					<button type="button" class="btn btn-default btn-sm modal-select">예약하기</button>
         					<button type="button" class="btn btn-primary btn-sm modal-close">취소</button>
         				</td>
         			</tr>

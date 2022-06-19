@@ -183,7 +183,7 @@
             </div>
             <div class="buttons text-center">
 	            <button type="button" class="btn btn-primary" onclick="history.back()">뒤로가기</button>
-    	        <button class="btn btn-default reserve">예약하기</button>
+    	        <button class="btn btn-default btn-myCalendar">내 예약정보 확인</button>
             </div>
         </div>
     </div>
@@ -352,37 +352,16 @@
         		}, css_seconds_to_milliSeconds($modal.css("transition-duration")));
         	}
         	
-        	// 모달 선택 버튼 클릭시 예약정보 텍스트 화면에 출력
+        	// 모달 선택 버튼 클릭시 예약데이터 전송
         	$modal.find(".modal-select").mousedown(function(){
-        		closeModal(true);
-        		alert(
-       				"예약정보를 확인 해주세요.\n"+
-           			"담당 트레이너 : " + "${param.trainerName}\n"+
-           			"예약 날짜 : " + reserve.reserveDate + "\n"+
-           			"예약 시간 : " + reserve.startTime + "\n"
-            	);
-        	});
-   	    	
-   	    	// 모달 취소 버튼 클릭시 모달 꺼짐
-   	    	$modal.find(".modal-close").mousedown(function() {
-   	    		closeModal(false);
-   	    	})
-        	
-        	// 모달 외부 마우스다운 이벤트시 꺼짐
-        	$modal.mousedown(function(e) {
-        		//모달에서는 실행 x
-        		if(e.target.className.indexOf("overlay") >= 0)
-					closeModal(false);
-        		else
-        			return;
-        	});
-   	    	// END of MODAL script ==============================================================================
-            
-            // PT 예약하기
-            $(".reserve").click(function(){
-            	if(!reserve.reserveDate) {
+        		if(!reserve.reserveDate) {
             		alert("예약 날짜를 선택해주세요!");
+            		window.location.href = contextPath + "/PTreserve/trainers";
             	}
+        		else if(!reserve.trainerId) {
+        			alert("트레이너 정보가 없습니다. 트레이너를 다시 선택해주세요.");
+        			
+        		}
             	else if(!reserve.startTime) {
             		alert("예약 시간을 선택해주세요!");
             	}
@@ -410,7 +389,30 @@
                 			alert("failed reservePT ajax communication");
                 		}
                 	});
-            	}
+            	}        		
+        		closeModal(false);
+        	});
+   	    	
+        	// 모달 close 구현
+   	    	$modal
+   	    		// 취소 버튼 마우스다운시 모달 꺼짐
+   	    		.find(".modal-close").mousedown(function() {
+   	    			closeModal(false);
+   	    		})
+   	    		.end()
+        		// 외부 마우스다운 이벤트시 꺼짐
+   	    		.mousedown(function(e) {
+   	        		//모달에서는 실행 x
+   	        		if(e.target.className.indexOf("overlay") >= 0)
+   						closeModal(false);
+   	        		else
+   	        			return;
+   	        	});
+   	    	// END of MODAL script ==============================================================================
+            
+            // 내 예약 페이지로 이동
+            $(".btn-myCalendar").click(function(){
+            	
             });
             
         });// END of Ready
