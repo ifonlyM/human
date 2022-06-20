@@ -25,7 +25,7 @@
 		
 		
 		<!-- 정회원 이상 가능 -->
-		<security:intercept-url pattern="/PTreserve/trainers" access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/PTreserve/trainers" access="permitAll"/>
 		<security:intercept-url pattern="/PTreserve/calendar" access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>
 		<security:intercept-url pattern="/board/register?category=3 " access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>
 		<security:intercept-url pattern="/board/modify?category=3" access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>
@@ -63,6 +63,8 @@
 			<!-- 세션만료시 호출되는 url  -->
 			<security:concurrency-control expired-url="/common/login" />
 		</security:session-management>
+		
+		<!-- <security:csrf request-matcher-ref="csrfMatchers"/> -->
 		
 	</security:http>
 	

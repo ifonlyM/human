@@ -1,7 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
-<sec:authentication property='principal.member' var="pinfo"/>
+<sec:authorize access="isAuthenticated()">
+	<sec:authentication property='principal.member' var="pinfo"/>
+</sec:authorize>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -356,16 +359,14 @@
         	$modal.find(".modal-select").mousedown(function(){
         		if(!reserve.reserveDate) {
             		alert("예약 날짜를 선택해주세요!");
-            		window.location.href = contextPath + "/PTreserve/trainers";
             	}
-        		else if(!reserve.trainerId) {
-        			alert("트레이너 정보가 없습니다. 트레이너를 다시 선택해주세요.");
-        			
-        		}
             	else if(!reserve.startTime) {
             		alert("예약 시간을 선택해주세요!");
             	}
-            	
+            	else if(!reserve.trainerId) {
+        			alert("트레이너 정보가 없습니다. 트레이너를 다시 선택해주세요.");
+        			location.href = contextPath + "/PTreserve/trainers";
+        		}
             	else if(!confirm(
             			"예약정보를 확인 해주세요.\n"+
             			"담당 트레이너 : " + "${param.trainerName}\n"+
@@ -376,7 +377,7 @@
             	}
             	else {
             		// 예약 데이터 전송
-            		var url = contextPath = "/PTreserve/reservePT";
+            		var url = contextPath + "/PTreserve/reservePT";
                 	$.ajax(url, {
                 		type : "POST",
                 		data : JSON.stringify(reserve),

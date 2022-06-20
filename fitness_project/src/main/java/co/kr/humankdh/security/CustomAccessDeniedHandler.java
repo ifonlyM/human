@@ -37,7 +37,15 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 	@ExceptionHandler(NoHandlerFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public String handle404() {
+		log.info("404");
 		return "404";
+	}
+	
+	@ExceptionHandler(NoHandlerFoundException.class)
+	@ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+	public String handle405() {
+		log.info("405");
+		return "/common/login";
 	}
 
 }

@@ -124,7 +124,7 @@ $(function() {
 	   str += '<div class="container">';
 	   str += '<div class="trainers-card">';
 	   str += '<div class="trainers-photo">';
-	   str += '<img src="../resources/images/'+ trainer.userName +'.jpg">';
+	   str += '<img src="'+contextPath+'/resources/images/'+ trainer.userName +'.jpg">';
 	   str += '</div>';
 	   str += '<div class="trainers-explain-odd">';
 	   str += '<h2 class="trainers-name text-white">'+ trainer.userName +' 트레이너</h2>';
@@ -160,7 +160,7 @@ $(function() {
 	   str += '</div>';
 	   str += '</div>';
 	   str += '<div class="trainers-choice">';
-	   str += '<form method="post" action="/PTreserve/calendar">';
+	   str += '<form method="post" action="'+contextPath+'/PTreserve/calendar">';
 	   str += '<input type="hidden" name="trainerName" value="'+ trainer.userName +'"/>';
 	   str += '<input type="hidden" name="trainerId" value="'+ trainer.userid +'"/>';
 	   str += '<button type="submit" class="btn btn-default btn-reserve">PT 예약하기</button>';
