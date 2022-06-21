@@ -1,5 +1,7 @@
+<%@page import="java.time.LocalTime"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!-- 예약 상세 모달창  -->
 <div id="tModal" class="tModal-overlay">
 	<div class="tModal-window">
@@ -15,7 +17,15 @@
         		</thead> -->
         		<tbody class="tModal-tbody">
 					<c:forEach var="i" begin="10" end="21">
-					<tr><td><input type="button" value="${i}:00"></td></tr>
+					<c:choose>
+						<c:when test="${hour >= i }">
+						<tr><td><input type="button" value="${i}:00" class="btn-default" disabled="disabled"></td></tr>
+						</c:when>
+						
+						<c:otherwise>
+						<tr><td><input type="button" value="${i}:00" class="btn-default"></td></tr>
+						</c:otherwise>
+					</c:choose>
 					</c:forEach>
         		</tbody>
         		<tfoot class="tModal-tfoot">

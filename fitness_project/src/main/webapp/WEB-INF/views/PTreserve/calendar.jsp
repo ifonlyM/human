@@ -120,6 +120,10 @@
          }
 			
 		.buttons button { margin: 30px;}  
+		
+		.tModal-tbody input {
+			border : none;
+		}
     </style>
 
     <!-- FullCalendar -->

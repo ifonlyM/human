@@ -1,5 +1,6 @@
 package co.kr.humankdh.controller;
 
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,22 +30,13 @@ import lombok.extern.log4j.Log4j;
 public class PT_ReserveController {
 	private PTreserveService service;
 	
-	@GetMapping(value="calendar")
+	/*@GetMapping(value="calendar")
 	public void calendar() {
 		log.info("calendar");
-	}
+	}*/
 	
-	@PostMapping(value="calendar", produces="text/plain; charset=utf-8")
-	public String calendar(String trainerName, String trainerId){
-		if(trainerName == null || trainerId == null ){
-			log.info("trainer data null");
-			return "redirect:/common/login";
-		}
-		else {
-			log.info(trainerId);
-			log.info(trainerName);
-			return null;
-		}
+	@RequestMapping(value="calendar", produces="text/plain; charset=utf-8", method={RequestMethod.GET, RequestMethod.POST})
+	public void calendar(){
 	}
 	
 	@GetMapping(value="myCalendar")

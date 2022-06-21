@@ -5,25 +5,30 @@
 <html lang="ko">
 
 <head>
-<sec:csrfMetaTags />
+	<sec:csrfMetaTags />
 	<style>
-
+		body .page-header {
+			margin-top: 0;
+		}
+		body .page-header #sticky-wrapper .header {
+			background-color: #333;
+		}
     </style>
-<jsp:include page="../includes/head.jsp" />
+	<jsp:include page="../includes/head.jsp" />
 </head>
 
 <body>
- <a href="../common/joinUs"></a>
+ 	<!-- <a href="../common/joinUs"></a> -->
     <div class="page-header">
-    <jsp:include page="../includes/header.jsp" />
-       
+    	<jsp:include page="../includes/header.jsp" />
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <div class="page-caption pinside40">
                         <h1 class="page-title">Error</h1>
-                        <h2 style="color: white"><c:out value="${SPRING_SECURITY_403_EXCEPTION.getMessage() }"/></h2>
+                        <%-- <h2 style="color: white"><c:out value="${SPRING_SECURITY_403_EXCEPTION.getMessage() }"/></h2> --%>
                         <h2 style="color: white"><c:out value="${msg}"/></h2>
+                        <h2 style="color: white">접근 권한이 없습니다.</h2>
                         
                     </div>
                 </div>
@@ -34,7 +39,7 @@
         <div class="container">
 	        <div>
 	       		<button id="backspace" style="border: hidden">
-	       			<a class="btn btn-primary btn-sm" href="../common/index">뒤로가기</a>
+	       			<a class="btn btn-primary btn-sm" href="../common/login">로그인페이지로 가기</a>
 	       		</button>
 	        </div>
         </div>
