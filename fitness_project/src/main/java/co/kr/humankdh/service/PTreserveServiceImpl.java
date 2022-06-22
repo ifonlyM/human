@@ -60,6 +60,10 @@ public class PTreserveServiceImpl implements PTreserveService{
 			return false;
 		}
 	}
-	
+
+	@Override
+	public List<String> getTrainerReservedTimeBy(String trainerId, String reserveDate) {
+		return mapper.selectTrainerReservedTimeBy(trainerId, reserveDate);
+	}
 	
 }

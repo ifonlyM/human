@@ -1,7 +1,20 @@
+<%@page import="java.time.LocalDate"%>
+<%@page import="java.time.format.DateTimeFormatter"%>
 <%@page import="java.time.LocalTime"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+<%!
+	// 오늘 날짜
+	LocalDate day = LocalDate.now();
+	
+	// 현재 시간 구하여 예약 불가능한 시간은 버튼 비활성화하기
+	LocalTime time = LocalTime.now();
+	String HH = time.format(DateTimeFormatter.ofPattern("HH"));
+	String HHmm = time.format(DateTimeFormatter.ofPattern("HH시 mm분"));
+%>
+<%-- <div id="time" hidden="hidden"><%=HHmm %></div> --%>
+<c:set var="HHmm" value="<%=HHmm %>"/>
+<c:set var="HH" value="<%=HH %>"/>
 <!-- 예약 상세 모달창  -->
 <div id="tModal" class="tModal-overlay">
 	<div class="tModal-window">
@@ -10,22 +23,23 @@
         </div>
         <div class="tModal-content">
         	<table class="tModal-table">
-        		<!-- <thead class="tModal-thead">
+        		<thead class="tModal-thead">
         			<tr>
-        				<td>시간</td>
+        				<td></td>
         			</tr>
-        		</thead> -->
+        		</thead>
         		<tbody class="tModal-tbody">
 					<c:forEach var="i" begin="10" end="21">
-					<c:choose>
-						<c:when test="${hour >= i }">
-						<tr><td><input type="button" value="${i}:00" class="btn-default" disabled="disabled"></td></tr>
+					<%-- <c:choose>
+						<c:when test="${HH >= i }">
+						<tr><td><input type="button" value="${i}:00" class="btn-secondary btn-disabled" disabled="disabled"></td></tr>
 						</c:when>
 						
 						<c:otherwise>
 						<tr><td><input type="button" value="${i}:00" class="btn-default"></td></tr>
 						</c:otherwise>
-					</c:choose>
+					</c:choose> --%>
+					<tr><td><input type="button" value="${i}:00" class="btn-default" data-time="${i}"></td></tr>
 					</c:forEach>
         		</tbody>
         		<tfoot class="tModal-tfoot">
@@ -44,8 +58,15 @@
 <script>
 	// 모달 요소 초기설정 스크립트
 	$(function(){
-		$(".tModal-table").find("tr").addClass("tModal-tr");
-		$(".tModal-table").find("td").addClass("tModal-td");
-		$(".tModal-tbody").find("input").addClass("tModal-input");
-	})
+		var modalTable = $(".tModal-table");
+		/* var nowTime = time.textContent; */
+		
+		modalTable
+			.find("tr").addClass("tModal-tr").end()
+			.find("td").addClass("tModal-td").end()
+			.children(".tModal-tbody")
+				.find("input").addClass("tModal-input").end().end();
+			/* .children(".tModal-thead")
+				.find("td").text("현재 시간  : " + "${HHmm}"); */
+	});
 </script>

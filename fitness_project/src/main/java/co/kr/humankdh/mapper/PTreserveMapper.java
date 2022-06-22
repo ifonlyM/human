@@ -2,6 +2,8 @@ package co.kr.humankdh.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import co.kr.humankdh.domain.MemberVo;
 import co.kr.humankdh.domain.ReserveVo;
 import co.kr.humankdh.domain.TrainerCareerVo;
@@ -33,4 +35,7 @@ public interface PTreserveMapper {
 	
 	// 이미 예약된 시간인지 조회(트레이너 id, 예약 날짜, 예약 시간)
 	boolean hasReserve(ReserveVo vo);
+	
+	// 지정한 날에 예약된 ReserveVo 반환
+	List<String> selectTrainerReservedTimeBy(@Param("trainerId")String trainerId, @Param("reserveDate")String reserveDate);
 }

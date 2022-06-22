@@ -321,21 +321,65 @@
 
         		// 선택한 셀인경우 모달 켜짐
 				if(dayGrid.hasClass("select-cell")) {
+					var nowHour = new Date().getHours();
+					var nowMin = new Date().getMinutes();
+						
 					//선택한 날짜 모달 타이틀에 출력 & reserveVo date set
-					reserve.reserveDate = dayGrid.data("date");						
+					reserve.reserveDate = dayGrid.data("date");
 					$modal
-						.find(".tModal-h2")
+						.find(".tModal-title>h2")
 							.html("${param.trainerName} 트레이너 예약<br>" + reserve.reserveDate).end()
-						// 모달 오픈시 visibility, opacity 속성을 사용해 fadeIn 연출
-						.addClass("open-modal");
+						// 모달 오픈시 css visibility, opacity 속성을 사용해 fadeIn 연출
+						.addClass("open-modal")
+						// 현재 시간,분 출력
+						//.find(".tModal-thead>tr>td").text("현재 시간 : "+nowHour+"시 "+nowMin+"분 입니다.");
 					
-	   	    		// 모달 켜졌을때 body스크롤 막기 & 스크롤 넓이만큼 padding-right
+	   	    		// 모달 켜졌을때 background body스크롤 막기 & 스크롤 넓이만큼 padding-right
 					var onScrollBodyWidth = $body.width() ;
 					$body
 						.addClass("hide-scroll")
 						.css("padding-right", window.innerWidth - onScrollBodyWidth);
+					
+					// 예약시간 버튼
+					var timeInputs = $modal.find(".tModal-tbody").find("input");
+					
+					// 당일 예약 불가능한 시간대 버튼 비활성화 
+					if(dayGrid.hasClass("fc-day-today")) {
+						for(var i = 0; i<timeInputs.length; i++) {
+							var ti = $(timeInputs[i]);
+							if(nowHour >= ti.attr("data-time")) {
+								disabledInput(ti);
+							}
+						}
+					}
+					
+					// 이미 예약되어있는 시간대는 예약 불가능
+					//(서버에 해당날짜,트레이너id를 이용해 데이터들을 조회 하고 해당하는 시간대들과 예약시간 버튼과 매치시켜서 비활성화)
+					var url = contextPath + "/PTreserve/getTrainerReservedTime";
+					console.log(JSON.stringify(reserve));
+					$.ajax(url,{
+						type: "POST",
+						data: JSON.stringify(reserve),
+						contentType: "application/json; charset=utf-8",
+						dataType: "JSON",
+						success: function(reservedList) {
+							alert(reservedList);
+						},
+						error : function(){
+							alert("select Trainer Reserved Time fail!!!");
+						}
+					});
 				}
    	    	});
+        	
+        	// 예약버튼 비활성화
+        	function disabledInput(input) {
+        		input
+	        		.removeClass("btn-default")
+					.addClass("btn-secondary btn-disabled")
+					.prop("disabled", true)
+					.attr("title", "지난 시간은 예약불가 입니다.");
+        	}
         	
         	// 모달 close시 처리 함수 =============================================================================
         	function closeModal(isReserve) {
@@ -350,12 +394,24 @@
        			// 모달 종료시 visibility, opacity 속성을 사용해 fadeOut 연출
    	    		$modal.removeClass("open-modal");
    	    		
-       			//모달 fadeOut 끝난뒤
+       			//모달 fadeOut 끝난뒤 모달 초기화 및 백그라운드 스크롤 복귀
         		setTimeout(function() {
-        			$modal.find(".tModal-h4").text("예약시간을 선택해 주세요.");
+        			// 모달 초기화
+        			$modal
+        				.find(".tModal-h4").text("예약시간을 선택해 주세요.").end()
+        				.find(".tModal-tbody")
+        					.find("input")
+        						.removeClass("btn-secondary btn-disabled")
+        						.addClass("btn-default")
+        						.prop("disabled", false)
+        						.attr("title", "예약가능");
+        			
+        			// 백그라운드 스크롤 복귀
         			$body
         				.removeClass("hide-scroll")
         				.css("padding-right", "0");
+        			
+        			// transition-duration 값을 milliseconds로 변경하여 setTime과  시간 동기화
         		}, css_seconds_to_milliSeconds($modal.css("transition-duration")));
         	}
         	

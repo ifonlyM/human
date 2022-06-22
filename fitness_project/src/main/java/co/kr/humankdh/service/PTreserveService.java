@@ -30,4 +30,8 @@ public interface PTreserveService {
 	
 	// PT예약 시간 입력
 	boolean insertPT(ReserveVo vo);
+	
+	// pt유저가 지정한 날에 예약된 시간 조회
+	List<String> getTrainerReservedTimeBy(String trainerId, String reserveDate);
+	
 }

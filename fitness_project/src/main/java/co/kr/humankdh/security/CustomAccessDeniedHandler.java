@@ -34,7 +34,9 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 		
 		log.error("Redirect...");
 		
-		response.sendRedirect("/common/accessError");
+		log.error(request.getContextPath());
+		
+		response.sendRedirect(request.getContextPath() + "/common/accessError");
 	}
 	
 	// 적용방법을 알아야 할거같음

@@ -108,4 +108,13 @@
 		AND ROWNUM = 1
 	</select>
 	
+	<select id="selectTrainerReservedTimeBy" parameterType="String" resultType="String">
+	SELECT TO_CHAR(START_TIME, 'HH24:MI') 
+	FROM FITNESS_PT_RESERVE 
+	WHERE 
+		T_ID = #{trainerId} AND 
+		RESERVE_DATE = TO_DATE(#{reserveDate}, 'YYYY-MM-DD') 
+	ORDER BY START_TIME
+	</select>
+	
 </mapper>

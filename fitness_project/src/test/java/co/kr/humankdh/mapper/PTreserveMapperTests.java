@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -79,6 +80,15 @@ public class PTreserveMapperTests {
 		vo.setStartTime("10:01");
 		boolean hasReserve = ptMapper.hasReserve(vo);
 		log.info(hasReserve);
+	}
+	
+	@Test
+	public void testSelecttrainerReservedTime() {
+		String trainerId = "hcs";
+		String reserveDate = "2022-06-22";
+		
+		List<String> list = ptMapper.selectTrainerReservedTimeBy(trainerId, reserveDate);
+		log.info(list);
 	}
 	
 }

@@ -1,6 +1,5 @@
 package co.kr.humankdh.controller;
 
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -146,6 +145,13 @@ public class PT_ReserveController {
 		else {
 			return "다른사용자가 먼저 예약한 시간입니다.\n죄송하지만 다른 시간을 이용해주세요.";
 		}
+	}
+	
+	@PostMapping("getTrainerReservedTime")
+	@ResponseBody
+	public List<String> getTrainerReservedTime(@RequestBody ReserveVo vo){
+		log.info(vo);
+		return service.getTrainerReservedTimeBy(vo.getTrainerId(), vo.getReserveDate());
 	}
 
 }

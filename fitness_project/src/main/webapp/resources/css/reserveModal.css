@@ -75,3 +75,7 @@
 	overflow: hidden;
 	scroll: no;
 }
+
+#tModal .btn-disabled {
+	cursor: not-allowed;
+}
