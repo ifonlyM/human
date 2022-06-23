@@ -126,14 +126,28 @@
 		}
     </style>
 
-    <!-- FullCalendar -->
+    <!-- FullCalendar cdn -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.css">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.js"></script>
     <script>
+	 	// contextPath
+		var contextPath = "${pageContext.request.contextPath}";	
+	 	// csrf 토큰을 미리 설정
+		var csrfHeader = $("meta[name='_csrf_header']").attr("content")
+		var csrfToken = $("meta[name='_csrf']").attr("content");
+		if(csrfHeader && csrfToken){
+			$(document).ajaxSend(function(e, xhr) {
+				xhr.setRequestHeader(csrfHeader, csrfToken);
+			});
+		}
+		
+		var calendar = "";
+    
+    	// 캘린더 초기설정
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
 
-            var calendar = new FullCalendar.Calendar(calendarEl, {
+            calendar = new FullCalendar.Calendar(calendarEl, {
                 // stickyHeaderDates: false,
                 height: 'auto',
                 // initialDate: '2020-09-12',
@@ -144,6 +158,29 @@
                 dayMaxEvents: true // allow "more" link when too many events
             });
             calendar.render();
+            
+         	// 페이지 헤더바의 높이를 구해서 풀캘린더 sticky header에 적응시키는 과정
+        	var headerHeight = $(".header").css("height");
+            $(".fc-scrollgrid thead td").css("top", headerHeight);
+        	
+            //브라우저 크기가 바뀌어도 fc-header의 sticky 포지션 변경이 일어나게 할려면?
+            $(window).resize(function(){
+                headerHeight = $(".header").css("height");
+                $(".fc-scrollgrid thead td").css("top", headerHeight);
+            });
+        	
+        	
+        	// 풀캘린더 헤더의 요일명을 영어 -> 한글로 교체, 색상번경
+       		$(".fc-col-header")
+       			.find(".fc-day-sun div a").text("일").end()
+       			.find(".fc-day-mon div a").text("월").end()
+       			.find(".fc-day-tue div a").text("화").end()
+       			.find(".fc-day-wed div a").text("수").end()
+       			.find(".fc-day-thu div a").text("목").end()
+       			.find(".fc-day-fri div a").text("금").end()
+       			.find(".fc-day-sat div a").text("토").end()
+       			.find(".fc-col-header-cell").css("background-color","#454545").end()
+       			.find("a").css("color","whitesmoke");
         });
     </script>
 </head>
@@ -204,22 +241,8 @@
     <!-- modal  -->
     <jsp:include page="../PTreserve/timegrid.jsp"/>
     
-    <!-- FullCalendar Custom & timegridModal Control -->
+    <!-- 풀캘린더 커스텀 & 예약 기능 구현 -->
     <script>
-    	// csrf 토큰을 미리 설정
-    	var csrfHeader = $("meta[name='_csrf_header']").attr("content")
-		var csrfToken = $("meta[name='_csrf']").attr("content");
-		if(csrfHeader && csrfToken){
-			$(document).ajaxSend(function(e, xhr) {
-				xhr.setRequestHeader(csrfHeader, csrfToken);
-			});
-		}
-    	// contextPath
-    	var contextPath = "${pageContext.request.contextPath}";
-    	
-    	// body의 초기 높이 저장
-    	var originHeight = document.body.scrollHeight;
-    	
     	function reserveVo(){
     		this.trainerId = "${param.trainerId}";
     		this.memberId = "${pinfo.userid}";
@@ -229,43 +252,52 @@
     	}
        	var reserve = new reserveVo(); 
     	
+       	// ready
         $(function(){
         	var $body = $("body");
         	var $html = $("html");
         	var $modal = $("#tModal");
         	var $calendar = $("#calendar");
-        	
-        	// 페이지 헤더바의 높이를 구해서 풀캘린더 sticky header에 적응시키는 과정
-        	var headerHeight = $(".header").css("height");
-            $(".fc-scrollgrid thead td").css("top", headerHeight);
-        	
-            //브라우저 크기가 바뀌어도 fc-header의 sticky 포지션 변경이 일어나게 할려면?
-            $(window).resize(function(){
-                headerHeight = $(".header").css("height");
-                $(".fc-scrollgrid thead td").css("top", headerHeight);
-            });
-        	
-        	
-        	// 풀캘린더 헤더의 요일명을 영어 -> 한글로 교체, 색상번경
-       		$(".fc-col-header")
-       			.find(".fc-day-sun div a").text("일").end()
-       			.find(".fc-day-mon div a").text("월").end()
-       			.find(".fc-day-tue div a").text("화").end()
-       			.find(".fc-day-wed div a").text("수").end()
-       			.find(".fc-day-thu div a").text("목").end()
-       			.find(".fc-day-fri div a").text("금").end()
-       			.find(".fc-day-sat div a").text("토").end()
-       			.find(".fc-col-header-cell").css("background-color","#454545").end()
-       			.find("a").css("color","whitesmoke");
 
             //달력 날짜 선택시 색깔 변경 
             //$(".fc-highlight").css("background","#c5f016")
             //-> 라이브러리 기본 우선순위에 밀려나기때문에 이벤트위임처리를 하던가
             //   css속성을 줄때 기존css 선택자보다 부모 레벨 선택자부터 시작해서 속성을 부여해준다.
             /* =====================================================================================  */
-	        
             
-            //모달 open 관련 스크립트==============================================================================
+            // 트레이너의 예약 일정에 따른 캘린더 날짜 배경색 변경 관련 스크립트 =======================================================
+            /* 페이지 입장시 또는 캘린더의 month 변경시 : 
+ 			       1.트레이너 id와 month를 이용해 해당month에 예약된 데이터를 day별 리스트로 가져오기
+ 			       2.예약 가능한 시간대가 없으면 해당 day의 배경색을 변경
+ 			       3.예약 불가능한 시간대의 조건
+ 			       	3-1. day별 리스트의 length가 max인 경우 (reserved = max)
+ 			       	3-2. day별 리스트의 length가 max는 아니지만 예약 가능한 시간대가  아닌경우 (reserved + timeover = max)
+            		3-3. 예약 가능한 시간대가 모두 지난경우(timeover = max)
+	        */
+	        setImpossibleReserveDay();
+	        function setImpossibleReserveDay() {
+            	var url = contextPath + "/PTreserve/getTrainerReservedListByDay";
+            	$.ajax(url, {
+            		type : "POST",
+            		data : JSON.stringify({
+            				"trainerId": "${param.trainerId}",
+            				"year_month": calendar.getDate().getFullYear()+"-"+leftPad(calendar.getDate().getMonth()+1),
+            				"today": leftPad(calendar.getDate().getDate())
+            		}),
+            		contentType : "application/json; charset=utf-8",
+            		dataType : "json",
+            		success : function(reservedLinkedHashMap) {
+            			console.log("seccess!!! getTrainerReservedListByDay");
+            			console.log(reservedLinkedHashMap);
+            			// 날짜 별로 예약이 얼마나 차있는지 캘린더 daygrid의 배경색에 그라디언트를 주는건 어떨까..?
+            		},
+            		error : function(){
+            			console.log("fail!!! getTrainerReservedListByDay");
+            		}
+            	});
+            }
+            
+            // 모달 open 관련 스크립트 ==============================================================================
             // 마우스 클릭의 이벤트 순서   mousedown -> mouseup -> click
             
            	// 모달 on/off 애니메이션 시간
@@ -321,8 +353,9 @@
 
         		// 선택한 셀인경우 모달 켜짐
 				if(dayGrid.hasClass("select-cell")) {
-					var nowHour = new Date().getHours();
-					var nowMin = new Date().getMinutes();
+					var nowHour = new Date().getHours(); // 현재 시간
+					var nowMin = new Date().getMinutes();// 현재 분
+					var timeInputs = $modal.find(".tModal-tbody").find("input"); // 예약시간 버튼
 						
 					//선택한 날짜 모달 타이틀에 출력 & reserveVo date set
 					reserve.reserveDate = dayGrid.data("date");
@@ -332,7 +365,7 @@
 						// 모달 오픈시 css visibility, opacity 속성을 사용해 fadeIn 연출
 						.addClass("open-modal")
 						// 현재 시간,분 출력
-						//.find(".tModal-thead>tr>td").text("현재 시간 : "+nowHour+"시 "+nowMin+"분 입니다.");
+						.find(".tModal-thead>tr>td").text("현재 "+nowHour+"시 "+nowMin+"분 입니다.");
 					
 	   	    		// 모달 켜졌을때 background body스크롤 막기 & 스크롤 넓이만큼 padding-right
 					var onScrollBodyWidth = $body.width() ;
@@ -340,15 +373,12 @@
 						.addClass("hide-scroll")
 						.css("padding-right", window.innerWidth - onScrollBodyWidth);
 					
-					// 예약시간 버튼
-					var timeInputs = $modal.find(".tModal-tbody").find("input");
-					
 					// 당일 예약 불가능한 시간대 버튼 비활성화 
 					if(dayGrid.hasClass("fc-day-today")) {
-						for(var i = 0; i<timeInputs.length; i++) {
-							var ti = $(timeInputs[i]);
+						for(var i = 0; i < timeInputs.length; i++) {
+							var ti = timeInputs.eq(i);
 							if(nowHour >= ti.attr("data-time")) {
-								disabledInput(ti);
+								disabledInput(ti, "timeover");
 							}
 						}
 					}
@@ -356,29 +386,40 @@
 					// 이미 예약되어있는 시간대는 예약 불가능
 					//(서버에 해당날짜,트레이너id를 이용해 데이터들을 조회 하고 해당하는 시간대들과 예약시간 버튼과 매치시켜서 비활성화)
 					var url = contextPath + "/PTreserve/getTrainerReservedTime";
-					console.log(JSON.stringify(reserve));
 					$.ajax(url,{
 						type: "POST",
 						data: JSON.stringify(reserve),
 						contentType: "application/json; charset=utf-8",
 						dataType: "JSON",
 						success: function(reservedList) {
-							alert(reservedList);
+							for(var i in reservedList) {
+								var ti = timeInputs.end().find('input[data-time='+reservedList[i]+']');
+								if(ti.hasClass("btn-default")){
+									disabledInput(ti, "reserved");									
+								}
+							}
 						},
 						error : function(){
-							alert("select Trainer Reserved Time fail!!!");
+							alert("fail!!! get Trainer Reserved Time ");
 						}
 					});
 				}
    	    	});
         	
-        	// 예약버튼 비활성화
-        	function disabledInput(input) {
+        	// 모달 예약버튼 비활성화
+        	function disabledInput(input, reason) {
         		input
 	        		.removeClass("btn-default")
 					.addClass("btn-secondary btn-disabled")
-					.prop("disabled", true)
-					.attr("title", "지난 시간은 예약불가 입니다.");
+					.prop("disabled", true);
+        		
+        		if(reason === "timeover"){
+					input.attr("title", "지난 시간은 예약불가 입니다.");        			
+        		}
+        		else if(reason === "reserved"){
+        			input.attr("title", "이미 예약 되어 있습니다.")
+        		}
+        		
         	}
         	
         	// 모달 close시 처리 함수 =============================================================================

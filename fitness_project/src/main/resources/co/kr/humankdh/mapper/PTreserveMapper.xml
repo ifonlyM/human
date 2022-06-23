@@ -98,23 +98,43 @@
 	)
 	</insert>
 	
-	<select id="hasReserve" resultType="boolean">
+	<select id="trainerHasReserveByTime" resultType="boolean">
 	SELECT COUNT(*) 
 	FROM FITNESS_PT_RESERVE 
 	WHERE 
 		RESERVE_DATE = TO_DATE(#{reserveDate},'YYYY-MM-DD') 
 		AND START_TIME = TO_DATE(#{reserveDate}||' '||#{startTime}, 'YYYY-MM-DD HH24:MI') 
 		AND T_ID = #{trainerId} 
-		AND ROWNUM = 1
+		AND ROWNUM >= 1
+	</select>
+	
+	<select id="memberHasReserveByDay" resultType="boolean">
+	SELECT COUNT(*)
+	FROM FITNESS_PT_RESERVE
+	WHERE
+		RESERVE_DATE = TO_DATE(#{reserveDate}, 'YYYY-MM-DD')
+		AND M_ID = #{memberId}
+		AND ROWNUM >= 1
 	</select>
 	
 	<select id="selectTrainerReservedTimeBy" parameterType="String" resultType="String">
-	SELECT TO_CHAR(START_TIME, 'HH24:MI') 
+	SELECT TO_CHAR(START_TIME, 'HH24') 
 	FROM FITNESS_PT_RESERVE 
 	WHERE 
 		T_ID = #{trainerId} AND 
 		RESERVE_DATE = TO_DATE(#{reserveDate}, 'YYYY-MM-DD') 
 	ORDER BY START_TIME
+	</select>
+	
+	<select id="selectTrainerReservedDayBy" resultType="String">
+	SELECT TO_CHAR(RESERVE_DATE, 'DD')
+	FROM FITNESS_PT_RESERVE
+	WHERE
+		T_ID = #{trainerId} AND
+		TO_CHAR(RESERVE_DATE, 'YYYY-MM') = #{year_month} AND
+		TO_CHAR(RESERVE_DATE, 'DD') >= #{today}
+	GROUP BY RESERVE_DATE
+	ORDER BY RESERVE_DATE
 	</select>
 	
 </mapper>

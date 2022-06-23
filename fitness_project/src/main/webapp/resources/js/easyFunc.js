@@ -35,3 +35,12 @@ function css_seconds_to_milliSeconds(css_seconds) {
 	css_seconds = css_seconds.replace("s", "");
 	return css_seconds * 1000;
 }
+
+// 10보다 작은 수 앞에 0을 붙임
+function leftPad(value) {
+    if (value >= 10) {
+        return value;
+    }
+
+    return `0${value}`;
+}

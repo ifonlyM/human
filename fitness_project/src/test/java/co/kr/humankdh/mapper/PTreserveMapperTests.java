@@ -72,13 +72,24 @@ public class PTreserveMapperTests {
 	}
 	
 	@Test
-	public void testSelectPT() {
+	public void testTrainerHasReserveByTime() {
 		ReserveVo vo = new ReserveVo();
 		vo.setTrainerId("hcs");
 		vo.setMemberId("wkqkaos123");
 		vo.setReserveDate("2022-06-15");
 		vo.setStartTime("10:01");
-		boolean hasReserve = ptMapper.hasReserve(vo);
+		boolean hasReserve = ptMapper.trainerHasReserveByTime(vo);
+		log.info(hasReserve);
+	}
+	
+	@Test
+	public void testMemberHasReserveByDay() {
+		ReserveVo vo = new ReserveVo();
+		vo.setTrainerId("hcs");
+		vo.setMemberId("wkqkaos123");
+		vo.setReserveDate("2022-06-23");
+		vo.setStartTime("11:00");
+		boolean hasReserve = ptMapper.memberHasReserveByDay(vo);
 		log.info(hasReserve);
 	}
 	
@@ -88,6 +99,16 @@ public class PTreserveMapperTests {
 		String reserveDate = "2022-06-22";
 		
 		List<String> list = ptMapper.selectTrainerReservedTimeBy(trainerId, reserveDate);
+		log.info(list);
+	}
+	
+	@Test
+	public void testSelectTrainerReservedDayBy() {
+		String trainerId = "hcs";
+		String year_month = "2022-06";
+		String today = "23";
+		
+		List<String> list = ptMapper.selectTrainerReservedDayBy(trainerId, year_month, today);
 		log.info(list);
 	}
 	

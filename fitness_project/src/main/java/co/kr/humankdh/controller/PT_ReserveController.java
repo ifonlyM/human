@@ -1,6 +1,8 @@
 package co.kr.humankdh.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -135,23 +138,59 @@ public class PT_ReserveController {
 		}
 	}
 	
+	/**
+	 * pt예약하기
+	 * @param vo
+	 * @return 상황에 맞는 예약 성공여부 String
+	 */
 	@PostMapping(value="reservePT", produces="text/plain; charset=utf-8")
 	@ResponseBody
 	public String reservePT(@RequestBody ReserveVo vo){
 		log.info(vo);
-		if(service.insertPT(vo)){
-			return "예약을 완료했습니다.";
-		}
-		else {
-			return "다른사용자가 먼저 예약한 시간입니다.\n죄송하지만 다른 시간을 이용해주세요.";
-		}
+		return service.insertPT(vo);
 	}
 	
+	/**
+	 * 지정된 날짜에 트레이너의 예약정보 가져오기
+	 * @param vo
+	 * @return 지정된 날짜의 트레이너 예약 시간 list
+	 */
 	@PostMapping("getTrainerReservedTime")
 	@ResponseBody
 	public List<String> getTrainerReservedTime(@RequestBody ReserveVo vo){
 		log.info(vo);
 		return service.getTrainerReservedTimeBy(vo.getTrainerId(), vo.getReserveDate());
+	}
+	
+	@PostMapping("getTrainerReservedListByDay")
+	@ResponseBody
+	public Map<String, List<String>> getTrainerReservedListByDay(@RequestBody Map<String, String> data){
+		if(data == null) return null;
+		
+		String trainerId = data.get("trainerId");
+		String year_month = data.get("year_month");
+		String today = data.get("today");
+		
+		log.info("트레이너 id : "+ trainerId);
+		log.info("년-월 : " + year_month);
+		log.info("오늘  : " + today);
+		
+		// 링크드 해쉬맵으로 반환 할것 (DB에서 의도한 순서대로 자료가 반환되면 좋을거 같다)
+		Map<String, List<String>> dayListMap = new LinkedHashMap<>();
+		List<String> dayList = service.getTrainerReservedDayBy(trainerId, year_month, today);
+		dayList.forEach(day -> {
+			dayListMap.put(
+					day, 
+					service.getTrainerReservedTimeBy(
+							trainerId, 
+							year_month+"-"+day
+						)
+				);
+		});
+		
+		log.info("dayListMap : " + dayListMap);
+		
+		return dayListMap;
 	}
 
 }
