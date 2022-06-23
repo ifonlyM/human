@@ -268,13 +268,14 @@
             // 트레이너의 예약 일정에 따른 캘린더 날짜 배경색 변경 관련 스크립트 =======================================================
             /* 페이지 입장시 또는 캘린더의 month 변경시 : 
  			       1.트레이너 id와 month를 이용해 해당month에 예약된 데이터를 day별 리스트로 가져오기
- 			       2.예약 가능한 시간대가 없으면 해당 day의 배경색을 변경
+ 			       2.예약 가능한 시간대가 없으면 해당 day의 배경색을 변경 -> *다른 아이디어 :예약이 차있는 만큼 배경색에 그라디언트를 줘보자
  			       3.예약 불가능한 시간대의 조건
  			       	3-1. day별 리스트의 length가 max인 경우 (reserved = max)
  			       	3-2. day별 리스트의 length가 max는 아니지만 예약 가능한 시간대가  아닌경우 (reserved + timeover = max)
             		3-3. 예약 가능한 시간대가 모두 지난경우(timeover = max)
 	        */
 	        setImpossibleReserveDay();
+            
 	        function setImpossibleReserveDay() {
             	var url = contextPath + "/PTreserve/getTrainerReservedListByDay";
             	$.ajax(url, {
@@ -289,7 +290,26 @@
             		success : function(reservedLinkedHashMap) {
             			console.log("seccess!!! getTrainerReservedListByDay");
             			console.log(reservedLinkedHashMap);
+            			var map = reservedLinkedHashMap;
             			// 날짜 별로 예약이 얼마나 차있는지 캘린더 daygrid의 배경색에 그라디언트를 주는건 어떨까..?
+            			for(var day in map){
+            				// :not 선택자를 여러개 쓸때는 의도하는 대로 구하기 위해서 선택자의 순서를 주의할것 
+            				var dayGrids = $calendar.find(".fc-daygrid-day:not(.fc-day-other, .fc-day-past)");
+            				
+            				// 서버에서 가져온 예약이 존재하는 날짜와 캘린더의 날짜를 매치시켜 예약갯수에따라 배경색 그라디언트 적용하기
+            				for(var i in dayGrids) {
+            					var matchDay = dayGrids.eq(i);
+            					if(day == matchDay.find(".fc-daygrid-day-number").text()){
+            						var percent = map[day].length / $modal.find(".tModal-tbody input").length;
+									percent = percent * 100;            						
+            						console.log(percent);
+            						
+            						matchDay.css({
+            							"background" : "linear-gradient(to top, #b9e118 "+percent+"%, white)"
+            						});
+            					}
+            				}
+            			}
             		},
             		error : function(){
             			console.log("fail!!! getTrainerReservedListByDay");
@@ -353,8 +373,8 @@
 
         		// 선택한 셀인경우 모달 켜짐
 				if(dayGrid.hasClass("select-cell")) {
-					var nowHour = new Date().getHours(); // 현재 시간
-					var nowMin = new Date().getMinutes();// 현재 분
+					var nowHour = new Date().getHours(); 
+					var nowMin = new Date().getMinutes();
 					var timeInputs = $modal.find(".tModal-tbody").find("input"); // 예약시간 버튼
 						
 					//선택한 날짜 모달 타이틀에 출력 & reserveVo date set
