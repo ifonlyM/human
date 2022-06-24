@@ -55,9 +55,9 @@ public class PTreserveServiceImpl implements PTreserveService{
 		if(mapper.trainerHasReserveByTime(vo)){
 			return "***예약실패***\n다른 회원이 이미 예약한 시간입니다.\n다른 시간을 이용해주세요.";
 		}
-		else if(mapper.memberHasReserveByDay(vo)){
+		/*else if(mapper.memberHasReserveByDay(vo)){
 			return "***예약실패***\n같은날 예약된 PT일정이 존재합니다.\n기존 일정을 취소하거나 다른 날을 이용해주세요. ";
-		}
+		}*/
 		else {
 			mapper.insertPT(vo);
 			return "예약을 완료했습니다.";

@@ -31,15 +31,18 @@
         body .fc .fc-daygrid-day.fc-day-today {
         	background-color: transparent; 
         }
-        body .fc .fc-daygrid-day.fc-day-today > div{ border:2px solid var(--today-color); }
+        body .fc .fc-daygrid-day.fc-day-today > div{
+        	border:2px solid var(--today-color); 
+        }
         body .fc .fc-daygrid-day.fc-day-today , body .fc .fc-daygrid-day.fc-day-future {
-        	border-color: rgb(221, 221, 221);
+        	/* border-color: rgb(221, 221, 221); */
         }
         
-        /* 과거날짜 배경색 지정 */
-        body .fc .fc-daygrid-day.fc-day-past {
-        	background-color: RGB(220, 220, 220);
-        	border: gray 1px solid;
+        /* 과거, 이번달이 아닌 날짜 배경색 지정 */
+        body .fc .fc-daygrid-day.fc-day-past,
+        body .fc .fc-daygrid-day.fc-day-other {
+        	background-color: RGB(230, 230, 230);
+        	border-color: rgb(221, 221, 221);
         }
         
         .page-header {
@@ -274,9 +277,9 @@
  			       	3-2. day별 리스트의 length가 max는 아니지만 예약 가능한 시간대가  아닌경우 (reserved + timeover = max)
             		3-3. 예약 가능한 시간대가 모두 지난경우(timeover = max)
 	        */
-	        setImpossibleReserveDay();
+	        drawsDayGridStackByReservedDays();
             
-	        function setImpossibleReserveDay() {
+	        function drawsDayGridStackByReservedDays() {
             	var url = contextPath + "/PTreserve/getTrainerReservedListByDay";
             	$.ajax(url, {
             		type : "POST",
@@ -284,29 +287,71 @@
             				"trainerId": "${param.trainerId}",
             				"year_month": calendar.getDate().getFullYear()+"-"+leftPad(calendar.getDate().getMonth()+1),
             				"today": leftPad(calendar.getDate().getDate())
-            		}),
+            			   }),
             		contentType : "application/json; charset=utf-8",
             		dataType : "json",
             		success : function(reservedLinkedHashMap) {
             			console.log("seccess!!! getTrainerReservedListByDay");
-            			console.log(reservedLinkedHashMap);
-            			var map = reservedLinkedHashMap;
-            			// 날짜 별로 예약이 얼마나 차있는지 캘린더 daygrid의 배경색에 그라디언트를 주는건 어떨까..?
+            			console.log("${param.trainerName} 트레이너 이번달 일별 예약 시간대 리스트 :", reservedLinkedHashMap);
+            			// 해당 트레이너의 일별 예약 시간대 리스트 맵 key: 일자, value: 예약 시간대 리스트
+            			var map = reservedLinkedHashMap; 
+            			if(!map) {
+            				console.log("map null");
+            				return;
+            			}
+            			
+            			// 예약 버튼들
+            			var reserveInputs = $modal.find(".tModal-tbody input"); 
+            			var validAllTimeLength = reserveInputs.length; // 예약가능 시간대 갯수
+            			
+            			// 현재 시간
+            			var nowHour = new Date().getHours();
+            			
+            			// 날짜 별로 예약이 얼마나 차있는지 캘린더 daygrid의 배경색에 스택효과를 주는건 어떨까..?
             			for(var day in map){
-            				// :not 선택자를 여러개 쓸때는 의도하는 대로 구하기 위해서 선택자의 순서를 주의할것 
+            				// :not에 선택자를 여러개 쓸때는 의도하는 대로 구하기 위해서 선택자의 순서를 주의할것 
+            				// 이번달에 예약가능한 캘린더 일자들
             				var dayGrids = $calendar.find(".fc-daygrid-day:not(.fc-day-other, .fc-day-past)");
             				
-            				// 서버에서 가져온 예약이 존재하는 날짜와 캘린더의 날짜를 매치시켜 예약갯수에따라 배경색 그라디언트 적용하기
+            				// 서버에서 가져온 예약이 존재하는 날짜와 캘린더의 날짜를 매치시켜 예약갯수에따라 배경색 스택 적용하기
             				for(var i in dayGrids) {
-            					var matchDay = dayGrids.eq(i);
-            					if(day == matchDay.find(".fc-daygrid-day-number").text()){
-            						var percent = map[day].length / $modal.find(".tModal-tbody input").length;
-									percent = percent * 100;            						
-            						console.log(percent);
+            					var matchGrid = dayGrids.eq(i);
+            					
+            					// 예약이 있는 날과 캘린더의 날짜를 매치
+            					console.log(day);
+            					if(Number(day) == matchGrid.find(".fc-daygrid-day-number").text()){
+            						var percent = 0;
             						
-            						matchDay.css({
-            							"background" : "linear-gradient(to top, #b9e118 "+percent+"%, white)"
-            						});
+            						// 오늘의 경우 예약 불가능한 모든 시간대 까지계산한다.
+            						if(matchGrid.hasClass("fc-day-today")){
+            							var invalidReservedTimeCnt = 0; // 시간이 지나 계산이 불필요한 예약 시간대 갯수
+            							var pastTimeLength = nowHour - reserveInputs.eq(0).data("time"); // 지나간 모든 예약가능 시간대 갯수
+            							
+            							// 현재시간을 기준으로 이미 지난 시간들의 갯수 구하기
+            							for(var j in map[day]){
+            								var reserveTime = map[day][j];
+            								if(reserveTime <= nowHour){
+            									invalidReservedTimeCnt += 1;
+            								}
+            							}
+            							/* console.log("예약 가능한 시간대 총 갯수 : ", map[day]);
+            							console.log("시간이 지나 계산이 불필요한 예약 시간대 갯수 : ", invalidReservedTimeCnt);
+            							console.log("현재 시간 기준 지나간 예약 시간대 갯수 : ", pastTimeLength); */
+            							
+            							// 예약된 시간대들을 기준으로 이미 지난 시간들은 빼주고, 총 예약가능 시간대 갯수에서 이미 지난 시간은 더해준다. 
+            							percent = 
+            								(map[day].length - invalidReservedTimeCnt + pastTimeLength) / validAllTimeLength;
+            							percent = percent * 100;
+            						}
+            						else {
+            							percent = (map[day].length / validAllTimeLength) * 100;            							
+            						}
+            						
+            						// 배경의 그라디언트를 이용해 스택효과를 내보았음
+            						matchGrid
+            							.css({
+	            							"background" : "linear-gradient(to top, #b9e118 "+percent+"%, white "+percent+"%)"
+            							});
             					}
             				}
             			}
@@ -315,9 +360,33 @@
             			console.log("fail!!! getTrainerReservedListByDay");
             		}
             	});
-            }
+            } // End of drawsDayGridStackByReservedDays()==========================================================
             
-            // 모달 open 관련 스크립트 ==============================================================================
+            // 풀 캘린더의 .fc-toolbar-title 에 변화가 감지되면 다시 drawsDayGridStackByReservedDays() 실행
+            // *change, on change 이벤트 모두 작동 안함
+            var fcMonth = calendar.getDate().getMonth();
+            $calendar.click(function(){
+            	changedFcMonth = calendar.getDate().getMonth();
+            	// 캘린더 월 변경시 
+            	if(fcMonth != changedFcMonth){
+            		$(".fc-daygrid-day:not(.fc-day-other, .fc-day-past)")
+            			.css({
+            				"background" : "none"
+            		});
+            		
+	            	drawsDayGridStackByReservedDays();
+	            	
+	            	$(".fc-day-other").css({
+						"background" : "none",
+	            		"background-color" : "RGB(230, 230, 230)"
+	            	});
+	            	
+	            	fcMonth = calendar.getDate().getMonth();
+            	}
+            });
+            	
+            	
+            // 모달 open 관련 스크립트 ===================================================================================
             // 마우스 클릭의 이벤트 순서   mousedown -> mouseup -> click
             
            	// 모달 on/off 애니메이션 시간
@@ -506,6 +575,7 @@
                 		dataType : "text",
                 		success : function(result) {
                 			alert(result);
+                			drawsDayGridStackByReservedDays(); // 예약 성공후 캘린더에 예약 현황 스택 그리기
                 		},
                 		error : function() {
                 			alert("failed reservePT ajax communication");
