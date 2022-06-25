@@ -137,4 +137,62 @@
 	ORDER BY RESERVE_DATE
 	</select>
 	
+	<select id="selectTrainerReservedAllDayBy" resultType="String">
+	SELECT TO_CHAR(RESERVE_DATE, 'DD')
+	FROM FITNESS_PT_RESERVE
+	WHERE
+		T_ID = #{trainerId} AND
+		TO_CHAR(RESERVE_DATE, 'YYYY-MM') = #{year_month}
+	GROUP BY RESERVE_DATE
+	ORDER BY RESERVE_DATE
+	</select>
+	
+	<select id="selectUserReservedTimeBy" parameterType="String" resultType="String">
+	SELECT TO_CHAR(START_TIME, 'HH24') 
+	FROM FITNESS_PT_RESERVE 
+	WHERE 
+		M_ID = #{userId} AND 
+		RESERVE_DATE = TO_DATE(#{reserveDate}, 'YYYY-MM-DD') 
+	ORDER BY START_TIME
+	</select>
+	
+	<select id="selectUserReservedDayBy" resultType="String">
+	SELECT TO_CHAR(RESERVE_DATE, 'DD')
+	FROM FITNESS_PT_RESERVE
+	WHERE
+		M_ID = #{userId} AND
+		TO_CHAR(RESERVE_DATE, 'YYYY-MM') = #{year_month}
+	GROUP BY RESERVE_DATE
+	ORDER BY RESERVE_DATE
+	</select>
+	
+	<resultMap type="reserve" id="reserveMap">
+		<id property="rno" column="RESERVE_NO"/>
+		<result property="trainerId" column="T_ID"/>
+		<result property="memberId" column="M_ID"/>
+		<result property="reserveDate" column="RESERVE_DATE"/>
+		<result property="startTime" column="START_TIME"/>
+		<result property="endTime" column="END_TIME"/>
+	</resultMap>
+	
+	<select id="selectUserReserveDetailBy" resultMap="reserveMap">
+	SELECT 
+		RESERVE_NO, 
+		TO_CHAR(RESERVE_DATE, 'YYYY-MM-DD') AS RESERVE_DATE, 
+		TO_CHAR(START_TIME, 'HH24:MI') AS START_TIME, 
+		TO_CHAR(END_TIME, 'HH24:MI') AS END_TIME, 
+		M_ID,
+		(
+			SELECT NAME
+			FROM FITNESS_MEMBER
+			WHERE ID = FITNESS_PT_RESERVE.T_ID
+		) AS T_ID
+	FROM FITNESS_PT_RESERVE
+	WHERE
+		M_ID = #{userId} AND
+		RESERVE_DATE = TO_DATE(#{reserveDate}, 'YYYY-MM-DD') AND
+		START_TIME = TO_DATE(#{reserveDate}||' '||#{reserveTime}, 'YYYY-MM-DD HH24') AND
+		ROWNUM = 1		
+	</select>
+	
 </mapper>

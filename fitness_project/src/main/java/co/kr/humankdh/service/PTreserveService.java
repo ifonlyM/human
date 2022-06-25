@@ -31,10 +31,19 @@ public interface PTreserveService {
 	// PT예약 시간 입력
 	String insertPT(ReserveVo vo);
 	
-	// 지정한 날에 해당 트레이너의 예약된 시간대 조회
+	// 지정한 날의 해당 트레이너의 예약된 시간대 조회
 	List<String> getTrainerReservedTimeBy(String trainerId, String reserveDate);
 	
-	// 지정한 달에 해당 트레이너의 예약이 있는 날짜 조회 (오늘 이후만 조회)
+	// 지정한 달의 해당 트레이너의 예약이 있는 날짜 조회 (오늘 이후만 조회)
 	List<String> getTrainerReservedDayBy(String trainerId, String year_month, String today);
+	
+	// 지정한 날의 해당 유저의 예약된 시간대 조회
+	List<String> getUserReservedTimeBy(String userId, String reserveDate);
+	
+	// 지정한 달의 유저의 예약이 있는 날짜 조회 (과거까지 조회 가능)
+	List<String> getUserReservedDayBy(String userId, String year_month);
+
+	// 지정한 날, 시간의 유저 PT예약 정보 가져오기
+	ReserveVo getUserReserveDetailBy(String userId, String reserveDate, String reserveTime);
 	
 }

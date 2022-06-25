@@ -194,7 +194,7 @@
 		   str += '</div>';
 		   str += '</div>';
 		   str += '<div class="trainers-choice">';
-		   str += '<form method="post" action="'+contextPath+'/PTreserve/calendar">';
+		   str += '<form method="post" action="'+contextPath+'/PTreserve/PTReserveCalendar">';
 		   str += '<input type="hidden" name="trainerName" value="'+ trainer.userName +'"/>';
 		   str += '<input type="hidden" name="trainerId" value="'+ trainer.userid +'"/>';
 		   str += '<button type="submit" class="btn btn-default btn-reserve">PT 예약하기</button>';
@@ -214,7 +214,7 @@
 		   str += '<div class="container">';
 		   str += '<div class="trainers-card">';
 		   str += '<div class="trainers-choice">';
-		   str += '<form method="post" action="'+contextPath+'/PTreserve/calendar">';
+		   str += '<form method="post" action="'+contextPath+'/PTreserve/PTReserveCalendar">';
 		   str += '<input type="hidden" name="trainerName" value="'+ trainer.userName +'"/>';
 		   str += '<input type="hidden" name="trainerId" value="'+ trainer.userid +'"/>';
 		   str += '<button type="submit" class="btn btn-default btn-reserve">PT 예약하기</button>';

@@ -79,3 +79,7 @@
 #tModal .btn-disabled {
 	cursor: not-allowed;
 }
+
+#tModal .tModal-tbody input {
+	border : none;
+}

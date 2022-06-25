@@ -71,7 +71,27 @@ public class PTreserveServiceImpl implements PTreserveService{
 
 	@Override
 	public List<String> getTrainerReservedDayBy(String trainerId, String year_month, String today) {
-		return mapper.selectTrainerReservedDayBy(trainerId, year_month, today);
+		if(today == null){
+			return mapper.selectTrainerReservedAllDayBy(trainerId, year_month);
+		}
+		else {
+			return mapper.selectTrainerReservedDayBy(trainerId, year_month, today);
+		}
+	}
+
+	@Override
+	public List<String> getUserReservedDayBy(String userId, String year_month) {
+		return mapper.selectUserReservedDayBy(userId, year_month);
+	}
+
+	@Override
+	public List<String> getUserReservedTimeBy(String userId, String reserveDate) {
+		return mapper.selectUserReservedTimeBy(userId, reserveDate);
+	}
+
+	@Override
+	public ReserveVo getUserReserveDetailBy(String userId, String reserveDate, String reserveTime) {
+		return mapper.selectUserReserveDetailBy(userId, reserveDate, reserveTime);
 	}
 	
 }

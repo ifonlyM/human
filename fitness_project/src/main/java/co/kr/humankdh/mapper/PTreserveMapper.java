@@ -45,11 +45,34 @@ public interface PTreserveMapper {
 			@Param("reserveDate")String reserveDate
 	);
 
-	// 트레이너id로 지정한 달에 예약된 day 반환 (지난 날은 제외)
+	// 트레이너id로 지정한 달의 예약된 day 조회 (지난 날은 제외)
 	List<String> selectTrainerReservedDayBy(
 			@Param("trainerId")String trainerId, 
 			@Param("year_month")String year_month,
 			@Param("today")String today
 	);
 	
+	// 트레이너 id로 지정한 달의 예약된 day 조회 (과거 까지 가능)
+	List<String> selectTrainerReservedAllDayBy(
+			@Param("trainerId")String trainerId,
+			@Param("year_month")String year_month
+	);
+	
+	// 유저id로 지정한 날에 예약된 시간대 조회
+	List<String> selectUserReservedTimeBy(
+			@Param("userId")String userId,
+			@Param("reserveDate")String reserveDate
+	);
+	
+	// 유저id로 지정한 달의 예약된 day 조회 (과거까지 조회가능)
+	List<String> selectUserReservedDayBy(
+			@Param("userId")String userId,
+			@Param("year_month")String year_month
+	);
+
+	// 유저 id와 PT예약 날짜,시간 에 해당하는 예약정보 조회
+	ReserveVo selectUserReserveDetailBy(
+			@Param("userId")String userId,
+			@Param("reserveDate")String reserveDate,
+			@Param("reserveTime")String reserveTime);
 }

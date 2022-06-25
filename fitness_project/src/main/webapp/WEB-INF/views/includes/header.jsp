@@ -24,7 +24,7 @@
                                 <li><a href="#" title="Features" class="animsition-link">PT예약</a>
                                     <ul>
                                         <li><a href="${pageContext.request.contextPath}/PTreserve/trainers" title="trainers" class="animsition-link">트레이너 선택</a></li>
-                                        <li><a href="${pageContext.request.contextPath}/PTreserve/calendar" title="PTcalendar" class="animsition-link">PT 예약확인</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/PTreserve/memberPTCalendar" title="PTcalendar" class="animsition-link">PT 예약확인</a></li>
                                     </ul>
                                 </li>
                                 <li><a href="../board/video_list" title="Classes" class="animsition-link">운동프로그램</a>

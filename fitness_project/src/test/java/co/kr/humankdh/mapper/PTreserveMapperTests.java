@@ -112,4 +112,38 @@ public class PTreserveMapperTests {
 		log.info(list);
 	}
 	
+	@Test
+	public void testSelectTrainerReservedAllDayBy() {
+		String trainerId = "hcs";
+		String year_month = "2022-06";
+		
+		List<String> list = ptMapper.selectTrainerReservedAllDayBy(trainerId, year_month);
+		log.info(list);
+	}
+	
+	@Test
+	public void testSelectUserReservedTimeBy(){
+		String userId = "wkqkaos123";
+		String reserveDate = "2022-06-25";
+		
+		log.info(ptMapper.selectUserReservedTimeBy(userId, reserveDate));
+	}
+	
+	@Test
+	public void testSelectUserReservedDayBy() {
+		String userId = "wkqkaos123";
+		String year_month = "2022-06";
+		
+		log.info(ptMapper.selectUserReservedDayBy(userId, year_month));
+	}
+	
+	@Test
+	public void testSelectUserReserveDetailBy() {
+		String userId = "wkqkaos123";
+		String reserveDate = "2022-06-15";
+		String reserveTime = "10";
+		
+		log.info(ptMapper.selectUserReserveDetailBy(userId, reserveDate, reserveTime));
+	}
+	
 }

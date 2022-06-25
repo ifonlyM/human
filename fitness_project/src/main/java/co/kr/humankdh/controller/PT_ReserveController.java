@@ -1,6 +1,5 @@
 package co.kr.humankdh.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,17 +30,17 @@ import lombok.extern.log4j.Log4j;
 public class PT_ReserveController {
 	private PTreserveService service;
 	
-	/*@GetMapping(value="calendar")
-	public void calendar() {
-		log.info("calendar");
-	}*/
-	
-	@RequestMapping(value="calendar", produces="text/plain; charset=utf-8", method={RequestMethod.GET, RequestMethod.POST})
+	@RequestMapping(value="PTReserveCalendar", produces="text/plain; charset=utf-8", method={RequestMethod.GET, RequestMethod.POST})
 	public void calendar(){
 	}
 	
-	@GetMapping(value="myCalendar")
-	public void myCalendar(String userId) {
+	@GetMapping(value="memberPTCalendar")
+	public void memberPTCalendar(String userId) {
+		
+	}
+	
+	@GetMapping(value="trainerPTCalender")
+	public void trinaerPTCalendar() {
 		
 	}
 	
@@ -162,6 +160,11 @@ public class PT_ReserveController {
 		return service.getTrainerReservedTimeBy(vo.getTrainerId(), vo.getReserveDate());
 	}
 	
+	/**
+	 * 지정한 달의 트레이너 한명의 일별 예약 리스트를  가져옴
+	 * @param data keys [트레이너 ID, 년-월, 오늘날짜 데이터(null일 경우 과거도 조회가능)]
+	 * @return Map<key=예약일, value=예약일에 해당하는 예약시간대 리스트>
+	 */
 	@PostMapping("getTrainerReservedListByDay")
 	@ResponseBody
 	public Map<String, List<String>> getTrainerReservedListByDay(@RequestBody Map<String, String> data){
@@ -191,6 +194,60 @@ public class PT_ReserveController {
 		log.info("dayListMap : " + dayListMap);
 		
 		return dayListMap;
+	}
+	
+	/**
+	 * 지정한 달의 유저 한명의 일별 예약 리스트를 가져옴
+	 * @param data keys[사용자ID, 년-월]
+	 * @return Map<key=예약일, value=예약일에 해당하는 예약시간대 리스트>
+	 */
+	@PostMapping("getUserReservedListByDay")
+	@ResponseBody
+	public Map<String, List<String>> getUserReservedListByDay(@RequestBody Map<String, String> data) {
+		if(data == null) return null;
+		
+		String userId = data.get("userId");
+		String year_month = data.get("year_month");
+		
+		log.info("트레이너 id : "+ userId);
+		log.info("년-월 : " + year_month);
+		
+		// 링크드 해쉬맵으로 반환 할것 (DB에서 의도한 순서대로 자료가 반환되면 좋을거 같다)
+		Map<String, List<String>> dayListMap = new LinkedHashMap<>();
+		List<String> dayList = service.getUserReservedDayBy(userId, year_month);
+		dayList.forEach(day -> {
+			dayListMap.put(
+					day, 
+					service.getUserReservedTimeBy(
+							userId, 
+							year_month+"-"+day
+						)
+				);
+		});
+		
+		log.info("dayListMap : " + dayListMap);
+		
+		return dayListMap;
+	}
+	
+	@PostMapping("getUserReservedTimeBy")
+	@ResponseBody
+	public List<String> getUserReservedTimeBy(@RequestBody Map<String, String> data) {
+		if(data == null) return null;
+		String userId = data.get("userId");
+		String reserveDate = data.get("reserveDate");
+		
+		return service.getUserReservedTimeBy(userId, reserveDate);
+	}
+	
+	@PostMapping("getUserReserveDetailBy")
+	@ResponseBody
+	public ReserveVo getUserReserveDetailBy(@RequestBody Map<String, String> data) {
+		if(data == null) return null;
+		String userId = data.get("userId");
+		String reserveDate = data.get("reserveDate");
+		String reserveTime = data.get("reserveTime");
+		return service.getUserReserveDetailBy(userId, reserveDate, reserveTime);
 	}
 
 }

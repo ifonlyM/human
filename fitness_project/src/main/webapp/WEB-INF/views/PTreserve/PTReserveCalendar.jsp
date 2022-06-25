@@ -34,7 +34,9 @@
         body .fc .fc-daygrid-day.fc-day-today > div{
         	border:2px solid var(--today-color); 
         }
-        body .fc .fc-daygrid-day.fc-day-today , body .fc .fc-daygrid-day.fc-day-future {
+        
+        body .fc .fc-daygrid-day.fc-day-today , 
+        body .fc .fc-daygrid-day.fc-day-future {
         	/* border-color: rgb(221, 221, 221); */
         }
         
@@ -123,10 +125,6 @@
          }
 			
 		.buttons button { margin: 30px;}  
-		
-		.tModal-tbody input {
-			border : none;
-		}
     </style>
 
     <!-- FullCalendar cdn -->
@@ -158,7 +156,11 @@
                 editable: true,
                 selectable: false,
                 businessHours: false,
-                dayMaxEvents: true // allow "more" link when too many events
+                dayMaxEvents: true, // allow "more" link when too many events
+            	titleFormat: {
+            	    year: 'numeric',
+            		month: '2-digit'
+            	}
             });
             calendar.render();
             
@@ -215,14 +217,14 @@
             		<div class="rect"></div>
             		<div class="explain">: 오늘</div>
             	</div>
-            	<div id="EX_possibleCell">
+            	<!-- <div id="EX_possibleCell">
             		<div class="rect"></div>
             		<div class="explain">: 예약가능</div>
             	</div>
             	<div id="EX_impossibleCell">
             		<div class="rect"></div>
             		<div class="explain">: 예약불가</div>
-            	</div>
+            	</div> -->
 				<ul>
 					<li>예약취소시 예약일 7일 이내의 취소건은 PT횟수가 차감됩니다. </li>
 					<li>PT예약일 NoShow에 관한건은 환불처리 되지않고 PT횟수가 차감됩니다. </li>
@@ -242,7 +244,7 @@
     <jsp:include page="../includes/foot.jsp"/>
     
     <!-- modal  -->
-    <jsp:include page="../PTreserve/timegrid.jsp"/>
+    <jsp:include page="../PTreserve/reserveModal.jsp"/>
     
     <!-- 풀캘린더 커스텀 & 예약 기능 구현 -->
     <script>
@@ -262,13 +264,13 @@
         	var $modal = $("#tModal");
         	var $calendar = $("#calendar");
 
-            //달력 날짜 선택시 색깔 변경 
+            //달력 날짜 선택시 색깔 변경  ========================================================================
             //$(".fc-highlight").css("background","#c5f016")
             //-> 라이브러리 기본 우선순위에 밀려나기때문에 이벤트위임처리를 하던가
             //   css속성을 줄때 기존css 선택자보다 부모 레벨 선택자부터 시작해서 속성을 부여해준다.
-            /* =====================================================================================  */
+            /* ======================================================================================= */
             
-            // 트레이너의 예약 일정에 따른 캘린더 날짜 배경색 변경 관련 스크립트 =======================================================
+            // 트레이너의 예약 일정에 따른 캘린더 날짜 배경색 변경 관련 스크립트 ================================================
             /* 페이지 입장시 또는 캘린더의 month 변경시 : 
  			       1.트레이너 id와 month를 이용해 해당month에 예약된 데이터를 day별 리스트로 가져오기
  			       2.예약 가능한 시간대가 없으면 해당 day의 배경색을 변경 -> *다른 아이디어 :예약이 차있는 만큼 배경색에 그라디언트를 줘보자
@@ -276,10 +278,11 @@
  			       	3-1. day별 리스트의 length가 max인 경우 (reserved = max)
  			       	3-2. day별 리스트의 length가 max는 아니지만 예약 가능한 시간대가  아닌경우 (reserved + timeover = max)
             		3-3. 예약 가능한 시간대가 모두 지난경우(timeover = max)
-	        */
+	        ========================================================================================== */
 	        drawsDayGridStackByReservedDays();
             
 	        function drawsDayGridStackByReservedDays() {
+	        	
             	var url = contextPath + "/PTreserve/getTrainerReservedListByDay";
             	$.ajax(url, {
             		type : "POST",
@@ -318,14 +321,14 @@
             					var matchGrid = dayGrids.eq(i);
             					
             					// 예약이 있는 날과 캘린더의 날짜를 매치
-            					console.log(day);
             					if(Number(day) == matchGrid.find(".fc-daygrid-day-number").text()){
             						var percent = 0;
             						
             						// 오늘의 경우 예약 불가능한 모든 시간대 까지계산한다.
             						if(matchGrid.hasClass("fc-day-today")){
             							var invalidReservedTimeCnt = 0; // 시간이 지나 계산이 불필요한 예약 시간대 갯수
-            							var pastTimeLength = nowHour - reserveInputs.eq(0).data("time"); // 지나간 모든 예약가능 시간대 갯수
+            							var pastTimeLength = nowHour + 1 - reserveInputs.eq(0).attr("data-time"); // 지나간 모든 예약가능 시간대 갯수
+            							if(pastTimeLength < 0) pastTimeLength = 0;
             							
             							// 현재시간을 기준으로 이미 지난 시간들의 갯수 구하기
             							for(var j in map[day]){
@@ -334,18 +337,18 @@
             									invalidReservedTimeCnt += 1;
             								}
             							}
-            							/* console.log("예약 가능한 시간대 총 갯수 : ", map[day]);
-            							console.log("시간이 지나 계산이 불필요한 예약 시간대 갯수 : ", invalidReservedTimeCnt);
-            							console.log("현재 시간 기준 지나간 예약 시간대 갯수 : ", pastTimeLength); */
             							
             							// 예약된 시간대들을 기준으로 이미 지난 시간들은 빼주고, 총 예약가능 시간대 갯수에서 이미 지난 시간은 더해준다. 
             							percent = 
             								(map[day].length - invalidReservedTimeCnt + pastTimeLength) / validAllTimeLength;
             							percent = percent * 100;
+            							
+            							console.log(map[day].length, invalidReservedTimeCnt, pastTimeLength, validAllTimeLength)
             						}
             						else {
             							percent = (map[day].length / validAllTimeLength) * 100;            							
             						}
+            						
             						
             						// 배경의 그라디언트를 이용해 스택효과를 내보았음
             						matchGrid
@@ -363,7 +366,7 @@
             } // End of drawsDayGridStackByReservedDays()==========================================================
             
             // 풀 캘린더의 .fc-toolbar-title 에 변화가 감지되면 다시 drawsDayGridStackByReservedDays() 실행
-            // *change, on change 이벤트 모두 작동 안함
+            // *change, on change 이벤트 모두 작동 안함, 직접 calendar의 month데이터 변화를 감지하는 코드로 변경
             var fcMonth = calendar.getDate().getMonth();
             $calendar.click(function(){
             	changedFcMonth = calendar.getDate().getMonth();
@@ -386,7 +389,7 @@
             });
             	
             	
-            // 모달 open 관련 스크립트 ===================================================================================
+            // 모달 관련 스크립트 ===================================================================================
             // 마우스 클릭의 이벤트 순서   mousedown -> mouseup -> click
             
            	// 모달 on/off 애니메이션 시간
@@ -417,15 +420,34 @@
             })
         	
         	// Cell 클릭시 테두리 생성 및 select-cell 클래스 추가
+        	// 화면에서 보여지고있는 다음달,이전달 Cell 클릭시 해당하는 달로 페이지 이동
        		$calendar.on("click", "td.fc-daygrid-day", function() {
-       			var $this = $(this);
+       			var dayGrid = $(this);
+       			
+       			// 이번달 페이지에서 다음달 날짜를 클릭했을땐 다음 페이지로 이동
+       			if(dayGrid.hasClass("fc-day-other")) {
+					var viewMonth = calendar.getDate().getMonth() + 1;
+					var [year, month, day] = dayGrid.attr("data-date").split("-");
+					console.log(year, month, day);
+					var selectMonth = Number(month);
+					
+					// 보여지고 있는 달보다 선택한 그리드의 달이 높은경우 (다음달로 이동)
+					if(viewMonth < selectMonth){
+	       				$(".fc-next-button").click();
+					}
+					// 보여지고 있는 달보다 선택한 그리드의 달이 낮은경우 (이전달로 이동)
+					else if(viewMonth > selectMonth){
+						$(".fc-prev-button").click();
+					}
+       			}
        			
 				$("div.fc-daygrid-day-frame").css("box-shadow", "none");
-				$this.children("div").css("box-shadow", "0 0 0 2px var(--select-color) inset");
+				dayGrid.children("div").css("box-shadow", "0 0 0 2px var(--select-color) inset");
 				
 				$("td.fc-daygrid-day").removeClass("select-cell");
-				$this.addClass("select-cell");			
+				dayGrid.addClass("select-cell");			
    	    	});
+            
             
         	// 선택된 캘린더 셀의 mousedown이벤트시 모달 켜짐
         	$calendar.on("mousedown", "td.fc-daygrid-day", function(e) {
@@ -447,12 +469,12 @@
 					var timeInputs = $modal.find(".tModal-tbody").find("input"); // 예약시간 버튼
 						
 					//선택한 날짜 모달 타이틀에 출력 & reserveVo date set
-					reserve.reserveDate = dayGrid.data("date");
+					reserve.reserveDate = dayGrid.attr("data-date");
 					$modal
-						.find(".tModal-title>h2")
-							.html("${param.trainerName} 트레이너 예약<br>" + reserve.reserveDate).end()
 						// 모달 오픈시 css visibility, opacity 속성을 사용해 fadeIn 연출
 						.addClass("open-modal")
+						.find(".tModal-title>h2")
+							.html("${param.trainerName} 트레이너 예약<br>" + reserve.reserveDate).end()
 						// 현재 시간,분 출력
 						.find(".tModal-thead>tr>td").text("현재 "+nowHour+"시 "+nowMin+"분 입니다.");
 					
@@ -552,6 +574,7 @@
             	}
             	else if(!reserve.startTime) {
             		alert("예약 시간을 선택해주세요!");
+            		return; // 모달 안꺼지게 return
             	}
             	else if(!reserve.trainerId) {
         			alert("트레이너 정보가 없습니다. 트레이너를 다시 선택해주세요.");
@@ -564,6 +587,7 @@
             			"예약 시간 : " + reserve.startTime + "\n"
             			)){
             		alert("예약을 취소했습니다.");
+            		return; // 모달 안꺼지게 return
             	}
             	else {
             		// 예약 데이터 전송
@@ -604,7 +628,7 @@
             
             // 내 예약 페이지로 이동
             $(".btn-myCalendar").click(function(){
-            	
+            	location.href = contextPath + "/PTreserve/memberPTCalendar";
             });
             
         });// END of Ready
