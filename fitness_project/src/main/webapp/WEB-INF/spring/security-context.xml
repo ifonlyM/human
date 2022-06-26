@@ -23,6 +23,8 @@
 		<security:intercept-url pattern="/board/register?category=2" access="permitAll"/>
 		<security:intercept-url pattern="/board/modify?category=2" access="permitAll"/>
 		
+		<!-- 정회원만 사용가능  -->
+		<security:intercept-url pattern="/PTreserve/memberPTCalendar" access="hasRole('ROLE_MEMBER')"/>
 		
 		<!-- 정회원 이상 가능 -->
 		<security:intercept-url pattern="/PTreserve/trainers" access="permitAll"/>
@@ -35,6 +37,7 @@
 		<!-- 트레이너 이상 가능 -->
 		<security:intercept-url pattern="/board/register?category=4" access="hasAnyRole('ROLE_TRAINER, ROLE_ADMIN')"/>
 		<security:intercept-url pattern="/board/modify?category=4" access="hasAnyRole('ROLE_TRAINER, ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/PTreserve/trainerPTCalendar" access="hasAnyRole('ROLE_TRAINER, ROLE_ADMIN')"/>
 		
 		<!-- 관리자 이상 가능 -->
 		<security:intercept-url pattern="/AdminServe/memberInquiry " access="hasAnyRole('ROLE_TRAINER ,ROLE_ADMIN')"/>

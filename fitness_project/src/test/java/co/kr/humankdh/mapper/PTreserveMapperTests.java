@@ -146,4 +146,19 @@ public class PTreserveMapperTests {
 		log.info(ptMapper.selectUserReserveDetailBy(userId, reserveDate, reserveTime));
 	}
 	
+	@Test
+	public void testDeleteReserveBy(){
+		Long rno = 6L;
+		ptMapper.deleteReserveBy(rno);
+	}
+	
+	@Test
+	public void testSelectTrainerReserveDetailBy() {
+		String trainerId = "hcs";
+		String reserveDate = "2022-06-27";
+		String reserveTime = "10";
+		
+		log.info(ptMapper.selectUserReserveDetailBy(trainerId, reserveDate, reserveTime));
+	}
+	
 }

@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
+<sec:authorize access="isAuthenticated()">
+	<sec:authentication property='principal.member' var="pinfo"/>
+</sec:authorize>
 <div class="header">
 
             <!-- navigation -->
@@ -24,7 +27,16 @@
                                 <li><a href="#" title="Features" class="animsition-link">PT예약</a>
                                     <ul>
                                         <li><a href="${pageContext.request.contextPath}/PTreserve/trainers" title="trainers" class="animsition-link">트레이너 선택</a></li>
-                                        <li><a href="${pageContext.request.contextPath}/PTreserve/memberPTCalendar" title="PTcalendar" class="animsition-link">PT 예약확인</a></li>
+                                        <c:choose>
+                                        	<c:when test="${pinfo.rating == 3 }">
+	                                        <li><a href="${pageContext.request.contextPath}/PTreserve/trainerPTCalendar" title="PTcalendar" class="animsition-link">PT 예약확인</a></li>
+                                        	</c:when>
+                                        	<c:when test="${pinfo.rating == 2 }">
+	                                        <li><a href="${pageContext.request.contextPath}/PTreserve/memberPTCalendar" title="PTcalendar" class="animsition-link">PT 예약확인</a></li>
+                                        	</c:when>
+                                        	<c:otherwise>
+                                        	</c:otherwise>
+                                        </c:choose>
                                     </ul>
                                 </li>
                                 <li><a href="../board/video_list" title="Classes" class="animsition-link">운동프로그램</a>

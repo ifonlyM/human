@@ -75,4 +75,13 @@ public interface PTreserveMapper {
 			@Param("userId")String userId,
 			@Param("reserveDate")String reserveDate,
 			@Param("reserveTime")String reserveTime);
+
+	// 지정한 rno의 예약 데이터를 삭제
+	void deleteReserveBy(Long rno);
+	
+	// 트레이너 id와 PT예약 날짜,시간에 해당하는 예약정보 조회
+	ReserveVo selectTrainerReserveDetailBy(
+			@Param("trainerId")String trainerId, 
+			@Param("reserveDate")String reserveDate, 
+			@Param("reserveTime")String reserveTime);
 }

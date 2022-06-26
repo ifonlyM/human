@@ -45,5 +45,11 @@ public interface PTreserveService {
 
 	// 지정한 날, 시간의 유저 PT예약 정보 가져오기
 	ReserveVo getUserReserveDetailBy(String userId, String reserveDate, String reserveTime);
+
+	// 지정한 번호의 예약 데이터를 삭제
+	void reserveCancle(Long rno);
+
+	// 지정한 날,시간의 트레이너 PT예약 정보 가져오기
+	ReserveVo getTrainerReserveDetailBy(String trainerId, String reserveDate, String reserveTime);
 	
 }

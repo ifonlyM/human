@@ -194,7 +194,7 @@
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <div class="page-caption pinside40">
-                        <h1 class="page-title">PT 예약 현황</h1>
+                        <h1 class="page-title">트레이너 PT 예약 현황</h1>
                     </div>
                 </div>
             </div>
@@ -218,14 +218,10 @@
             		<div class="rect"></div>
             		<div class="explain">: 예약 있는날</div>
             	</div>
-				<ul>
-					<li>예약취소시 예약일 7일 이내의 취소건은 PT횟수가 차감됩니다. </li>
-					<li>PT예약일 NoShow에 관한건은 환불처리 되지않고 PT횟수가 차감됩니다. </li>
-				</ul>
             </div>
             <div class="buttons text-center">
 	            <button type="button" class="btn btn-primary" onclick="history.back()">뒤로가기</button>
-    	        <button class="btn btn-default btn-myCalendar">내 예약정보 확인</button>
+    	        <button class="btn btn-default" onclick="location.href='${pageContext.request.contextPath}/common/index'">홈으로 이동</button>
             </div>
         </div>
     </div>
@@ -248,55 +244,59 @@
         	var $html = $("html");
         	var $modal = $("#tModal");
         	var $calendar = $("#calendar");
+        	var validTimeLength = 12;
 
-	        drawsDayGridByReservedDays();
-            
-	        function drawsDayGridByReservedDays() {
-	        	
-            	var url = contextPath + "/PTreserve/getUserReservedListByDay";
+        	drawsDayGridStackByReservedDays();
+        	
+			function drawsDayGridStackByReservedDays() {
+            	var url = contextPath + "/PTreserve/getTrainerReservedListByDay";
             	$.ajax(url, {
             		type : "POST",
             		data : JSON.stringify({
-            				"userId": "${pinfo.userid}",
+            				"trainerId": "${pinfo.userid}",
             				"year_month": calendar.getDate().getFullYear()+"-"+leftPad(calendar.getDate().getMonth()+1)
             			   }),
             		contentType : "application/json; charset=utf-8",
             		dataType : "json",
             		success : function(reservedLinkedHashMap) {
-            			
             			console.log("seccess!!! getTrainerReservedListByDay");
-            			console.log("${pinfo.userid} 회원의 이번달 일별 예약 시간대 리스트 :", reservedLinkedHashMap);
-            			
-            			// 해당 유저의 일별 예약 시간대 리스트 맵 key: 일자, value: 예약 시간대 리스트
+            			console.log("${param.trainerName} 트레이너 이번달 일별 예약 시간대 리스트 :", reservedLinkedHashMap);
+            			// 해당 트레이너의 일별 예약 시간대 리스트 맵 key: 일자, value: 예약 시간대 리스트
             			var map = reservedLinkedHashMap; 
+            			if(!map) {
+            				console.log("map null");
+            				return;
+            			}
             			
+            			// 현재 시간
+            			var nowHour = new Date().getHours();
+            			
+        				// 이번달 캘린더 cell 가져오고 백그라운드 초기화
             			// :not에 선택자를 여러개 쓸때는 의도하는 대로 구하기 위해서 선택자의 순서를 주의할것 
-            			// 이번달만 선택
         				var dayGrids = $calendar.find(".fc-daygrid-day:not(.fc-day-other)");
+            			dayGrids.css({"background" : "none"});
             			
-            			// 색상 주입하기전에 초기화
-            			dayGrids.css({"background": "none"});
-            			
-            			// 날짜 별로 예약이 있는날은 배경 색상을 그린다.
             			for(var day in map){
             				
-            				// 서버에서 가져온 예약이 존재하는 날짜와 캘린더의 날짜를 매치시켜 예약이 있는 날은 
+            				// 서버에서 가져온 예약이 존재하는 날짜와 캘린더의 날짜를 매치시켜 예약갯수에따라 배경색 스택 적용하기
             				for(var i in dayGrids) {
-            					
             					var matchGrid = dayGrids.eq(i);
             					
             					// 예약이 있는 날과 캘린더의 날짜를 매치
             					if(Number(day) == matchGrid.find(".fc-daygrid-day-number").text()){
+           							var	percent = (map[day].length / validTimeLength) * 100;            							
             						
-            						// 예약되어 있는 날은 배경색을 변경
-            						matchGrid.css({"background" : "#b9e118"});
+            						// 배경의 그라디언트를 이용해 스택효과를 내보았음
+            						matchGrid
+            							.css({
+	            							"background" : "linear-gradient(to top, #b9e118 "+percent+"%, white "+percent+"%)"
+            							});
             					}
             				}
             			}
-            			
             		},
             		error : function(){
-            			console.log("fail!!! getTrainerReservedListByDay");
+            			alert("fail!!! drawsDayGridStackByReservedDays()");
             		}
             	});
             } // End of drawsDayGridStackByReservedDays()==========================================================
@@ -313,7 +313,7 @@
             				"background" : "none"
             		});
             		
-            		drawsDayGridByReservedDays();
+            		drawsDayGridStackByReservedDays();
 	            	
 	            	$(".fc-day-other").css({
 						"background" : "none",
@@ -324,7 +324,7 @@
 	            fcMonth = calendar.getDate().getMonth();
             });
             
-         	// Cell 클릭시 테두리 생성 및 select-cell 클래스 추가
+         	// Cell 클릭시 테두리 생성 및 select-cell 클래스 추가 =========================================
         	// 화면에서 보여지고있는 다음달,이전달 Cell 클릭시 해당하는 달로 페이지 이동
        		$calendar.on("click", "td.fc-daygrid-day", function() {
        			var dayGrid = $(this);
@@ -355,7 +355,7 @@
             	
             // 모달  관련 스크립트 ===================================================================================
            	
-            // 선택한 cell을 한번더 클릭시 모달 open
+            // 선택한 cell을 한번더 클릭시 모달 open =====================================================
             $calendar.on("mousedown", "td.fc-daygrid-day", function(e) {
 				// 우클린인 경우 실행안함	        		
         		if(isRightButton(e)) return;
@@ -384,12 +384,12 @@
 					.css("padding-right", window.innerWidth - onScrollBodyWidth);
 				
 				// 선택한 날짜의 예약 데이터를 불러와 '상세 예약 정보 보기' 버튼 활성화
-				var url = contextPath + "/PTreserve/getUserReservedTimeBy";
+				var url = contextPath + "/PTreserve/getTrainerReservedTimeBy";
 				$.ajax(url,{
 					type : "POST",
 					data : JSON.stringify({
-						"userId" : "${pinfo.userid}",
-						"reserveDate" : dayGrid.data("date")
+						"trainerId" : "${pinfo.userid}",
+						"reserveDate" : dayGrid.attr("data-date")
 					}),
 					contentType : "application/json; charset=utf-8",
 					dataType : "json",
@@ -439,11 +439,11 @@
             	//console.log($modal.attr("data-date"), leftPad(input.attr("data-time")));
             	
             	// 예약시간 버튼 클릭시 서버와 통신하여 상세 정보 open
-            	var url = contextPath + "/PTreserve/getUserReserveDetailBy";
+            	var url = contextPath + "/PTreserve/getTrainerReserveDetailBy";
             	$.ajax(url,{
             		type : "POST",
             		data : JSON.stringify({
-            			"userId" : "${pinfo.userid}",
+            			"trainerId" : "${pinfo.userid}",
             			"reserveDate" : $modal.attr("data-date"),
             			"reserveTime" : leftPad(input.attr("data-time"))
             		}),
@@ -462,7 +462,7 @@
             			reserveDetail
             				.html(
             						"예약번호 : "+leftPad(detailData.rno)+"<br>"+
-            						"파트너 : "+detailData.trainerId+"<br>"+
+            						"파트너 : "+detailData.memberId+"<br>"+
             						"예약 날짜 : "+year+"년 "+month+"월 "+day+"일"+"<br>"+
             						"시작 시간 : "+detailData.startTime+"시"+
             						endTimeStr
@@ -554,12 +554,11 @@
         				.find(".tfoot-title").text("선택한 예약을 취소할 수 있습니다.");
         			
         			// 캘린더의 예약 현황 업데이트
-    				drawsDayGridByReservedDays();
+    				drawsDayGridStackByReservedDays();
         			
         			// transition-duration 값을 milliseconds로 변경하여 setTime과  시간 동기화
         		}, css_seconds_to_milliSeconds($modal.css("transition-duration")));
         	}
-        	
    	    	// END of MODAL script ==============================================================================
             
         });/* End of Ready  */

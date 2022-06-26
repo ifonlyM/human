@@ -93,5 +93,15 @@ public class PTreserveServiceImpl implements PTreserveService{
 	public ReserveVo getUserReserveDetailBy(String userId, String reserveDate, String reserveTime) {
 		return mapper.selectUserReserveDetailBy(userId, reserveDate, reserveTime);
 	}
+
+	@Override
+	public void reserveCancle(Long rno) {
+		mapper.deleteReserveBy(rno);
+	}
+
+	@Override
+	public ReserveVo getTrainerReserveDetailBy(String trainerId, String reserveDate, String reserveTime) {
+		return mapper.selectTrainerReserveDetailBy(trainerId, reserveDate, reserveTime);
+	}
 	
 }

@@ -195,4 +195,30 @@
 		ROWNUM = 1		
 	</select>
 	
+	<delete id="deleteReserveBy">
+	DELETE FITNESS_PT_RESERVE
+	WHERE
+		RESERVE_NO = #{rno}
+	</delete>
+	
+	<select id="selectTrainerReserveDetailBy" resultMap="reserveMap">
+	SELECT 
+		RESERVE_NO, 
+		TO_CHAR(RESERVE_DATE, 'YYYY-MM-DD') AS RESERVE_DATE, 
+		TO_CHAR(START_TIME, 'HH24:MI') AS START_TIME, 
+		TO_CHAR(END_TIME, 'HH24:MI') AS END_TIME, 
+		T_ID,
+		(
+			SELECT NAME
+			FROM FITNESS_MEMBER
+			WHERE ID = FITNESS_PT_RESERVE.M_ID
+		) AS M_ID
+	FROM FITNESS_PT_RESERVE
+	WHERE
+		T_ID = #{trainerId} AND
+		RESERVE_DATE = TO_DATE(#{reserveDate}, 'YYYY-MM-DD') AND
+		START_TIME = TO_DATE(#{reserveDate}||' '||#{reserveTime}, 'YYYY-MM-DD HH24') AND
+		ROWNUM = 1
+	</select>
+	
 </mapper>

@@ -24,7 +24,7 @@
         			<tr><td><h4 class="tfoot-title">선택한 예약을 취소할 수 있습니다.</h4></td></tr>
         			<tr>
         				<td>
-        					<button type="button" class="btn btn-default btn-sm cancle-reserve">예약 취소</button>
+        					<button type="button" class="btn btn-default btn-sm modal-reserve-cancle">예약 취소</button>
         					<button type="button" class="btn btn-primary btn-sm modal-close">닫기</button>
         				</td>
         			</tr>

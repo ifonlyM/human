@@ -39,7 +39,7 @@ public class PT_ReserveController {
 		
 	}
 	
-	@GetMapping(value="trainerPTCalender")
+	@GetMapping(value="trainerPTCalendar")
 	public void trinaerPTCalendar() {
 		
 	}
@@ -153,9 +153,9 @@ public class PT_ReserveController {
 	 * @param vo
 	 * @return 지정된 날짜의 트레이너 예약 시간 list
 	 */
-	@PostMapping("getTrainerReservedTime")
+	@PostMapping("getTrainerReservedTimeBy")
 	@ResponseBody
-	public List<String> getTrainerReservedTime(@RequestBody ReserveVo vo){
+	public List<String> getTrainerReservedTimeBy(@RequestBody ReserveVo vo){
 		log.info(vo);
 		return service.getTrainerReservedTimeBy(vo.getTrainerId(), vo.getReserveDate());
 	}
@@ -194,6 +194,26 @@ public class PT_ReserveController {
 		log.info("dayListMap : " + dayListMap);
 		
 		return dayListMap;
+	}
+	
+	@PostMapping("getTrainerReserveTimeBy")
+	@ResponseBody
+	public List<String> getTrainerReservedTimeBy(@RequestBody Map<String, String> data){
+		if(data == null) return null;
+		String trainerId = data.get("trainerId");
+		String reserveDate = data.get("reserveDate");
+		return service.getTrainerReservedTimeBy(trainerId, reserveDate);
+	}
+	
+	@PostMapping("getTrainerReserveDetailBy")
+	@ResponseBody
+	public ReserveVo getTrainerReserveDetailBy(@RequestBody Map<String, String> data){
+		if(data == null) return null;
+		return service.getTrainerReserveDetailBy(
+				data.get("trainerId"),
+				data.get("reserveDate"),
+				data.get("reserveTime")
+				);
 	}
 	
 	/**
@@ -248,6 +268,17 @@ public class PT_ReserveController {
 		String reserveDate = data.get("reserveDate");
 		String reserveTime = data.get("reserveTime");
 		return service.getUserReserveDetailBy(userId, reserveDate, reserveTime);
+	}
+	
+	@PostMapping(value="reserveCancle", produces="text/plain; charset=utf-8")
+	@ResponseBody
+	public String reserveCancle(@RequestBody ReserveVo vo){
+		service.reserveCancle(vo.getRno());
+		String date[] = vo.getReserveDate().split("-");
+		String resultMsg = date[0]+"년 "+date[1]+"월 "+date[2]+"일\n";
+		resultMsg += vo.getStartTime()+"시 예약을 취소했습니다.";
+		
+		return resultMsg;
 	}
 
 }
