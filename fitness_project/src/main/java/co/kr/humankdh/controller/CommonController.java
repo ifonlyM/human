@@ -92,9 +92,6 @@ public class CommonController {
 	public String login(@RequestBody Map<String, Object> param, HttpServletRequest req , Model model) {
 		log.info("post login");
 		log.info(param);
-//		Map loginInfo = map;
-		
-//		log.info("아이디 비밀번호 맵 : " + map);
 		
 		if(service.login(param.get("userid").toString(), param.get("pwd").toString()) == 1){
 			log.info("로그인 성공");
@@ -118,23 +115,6 @@ public class CommonController {
 		session.invalidate();
 		return "redirect:/common/login";
 	}
-	
-	// 세션
-//	@ResponseBody
-//	@RequestMapping(value="/login", method = RequestMethod.POST)
-//	public ModelAndView afLogin(@RequestBody Map<String, Object> param , HttpServletRequest request){
-//		
-//		HttpSession session = request.getSession();
-//		
-//		int log = service.login("id", "pwd");
-//		
-//		session.setAttribute("", log);
-//		
-//		
-//		return null;
-//		
-//	}
-	
 	
 	// 아이디 중복체크
 	@ResponseBody
@@ -206,7 +186,6 @@ public class CommonController {
 		
 		
 		return "redirect:/common/index";
-		
 	}
 	
 	// CRUD
@@ -224,7 +203,6 @@ public class CommonController {
 		rttr.addAttribute("result ::" + vo.getUserid());
 		
 		return "redirect:/common/login";
-		
 	}
 	
 	// Read
@@ -240,7 +218,6 @@ public class CommonController {
 	@PostMapping("UpdateMember")
 	public String UpdateMember() {
 		return "redirect:/common/login";
-		
 	}
 	
 	// Delete
