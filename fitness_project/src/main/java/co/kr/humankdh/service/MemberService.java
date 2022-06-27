@@ -34,4 +34,7 @@ public interface MemberService {
 	
 	String equalPwd(String numStr, String pwd);
 	
+	// 유저 비밀번호 변경
+	void setPw(String userid, String userpw);
+	
 }

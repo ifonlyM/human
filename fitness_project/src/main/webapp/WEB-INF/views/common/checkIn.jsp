@@ -84,16 +84,15 @@
 	  }
 	</script> -->
 <script>
-var csrfHeader = $("meta[name='_csrf_header']").attr("content")
-var csrfToken = $("meta[name='_csrf']").attr("content");
-if(csrfHeader && csrfToken){
-	$(document).ajaxSend(function(e, xhr) {
-		xhr.setRequestHeader(csrfHeader, csrfToken);
-	});
-}
-
-$(function() {
-	 $(document).ready(function(){
+	var csrfHeader = $("meta[name='_csrf_header']").attr("content")
+	var csrfToken = $("meta[name='_csrf']").attr("content");
+	if(csrfHeader && csrfToken){
+		$(document).ajaxSend(function(e, xhr) {
+			xhr.setRequestHeader(csrfHeader, csrfToken);
+		});
+	}
+	
+	$(document).ready(function(){
 	    	var isInvalid_ID = false;
 	    	var isDblCheck_ID = false;
 	    	
@@ -110,6 +109,7 @@ $(function() {
 		    	if(!isInvalid_ID) return;
 		    	var url = "${pageContext.request.contextPath}/common/idChk";
 		    	$.ajax(url, {
+		    		
 		    		type : "post",
 		    		data : inputId,
 		    		contentType : "application/text; charset=utf-8", // 보내는 데이터 설정
@@ -128,14 +128,12 @@ $(function() {
 					error : function(request, status, error){
 						alert("failed ajax idcheck");
 					}
-		    	});
+					
+		    	});// End of idChk ajax
 		    	
-		    });
+		    }); // End of #id_input blur event
 		    
-	
-	 )}
- });
-
+	 }); // End of Ready
 </script>
 
 <!-- 

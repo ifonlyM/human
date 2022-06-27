@@ -84,13 +84,17 @@
 		RATING = #{rating},
 		GENDER = #{gender}
 		WHERE ID = #{userid}
-		
-		
 	</update>
 	
 	<update id="authupdate" >
 		UPDATE FITNESS_AUTH SET
 		AUTHORITY = #{auth}
+		WHERE ID = #{userid}
+	</update>
+	
+	<update id="updatePw">
+		UPDATE FITNESS_MEMBER SET
+		PWD = #{userpw}
 		WHERE ID = #{userid}
 	</update>
 	
@@ -126,6 +130,7 @@
       )
       WHERE RN > (#{pageNum}-1) * #{amount}
      </select>
+     
 		<select id="getTotalCount" resultType="int">
 	      SELECT COUNT(*) FROM FITNESS_MEMBER  WHERE
 	      <include refid="cri" />

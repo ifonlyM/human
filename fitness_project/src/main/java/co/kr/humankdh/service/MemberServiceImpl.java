@@ -136,6 +136,14 @@ public class MemberServiceImpl implements MemberService {
 	// 인증번호를 비밀번호와 같게 만들기
 	@Override
 	public String equalPwd(String numStr, String pwd) {
-		return memberMapper.updatePw(equalPwd(numStr, pwd)); 
+		memberMapper.updatePw("userid", equalPwd(numStr, pwd)); 
+		return "";
+	}
+	
+	// 비밀번호 변경
+	@Override
+	public void setPw(String userid, String userpw) {
+		userpw = encoder.encode(userpw);
+		memberMapper.updatePw(userid, userpw);
 	}
 }

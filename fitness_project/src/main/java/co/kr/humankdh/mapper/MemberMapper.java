@@ -57,5 +57,7 @@ public interface MemberMapper {
 	int findId(String id);
 	
 	// 비밀번호 초기화
-	String updatePw(String pwd);
+	void updatePw(
+			@Param("userid")String userid, 
+			@Param("userpw")String userpw);
 }

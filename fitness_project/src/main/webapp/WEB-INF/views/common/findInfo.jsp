@@ -41,7 +41,7 @@
 			<div class="row">
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="page-caption pinside40">
-						<h1 class="page-title">아이디 / 비밀번호 찾기</h1>
+						<h1 class="page-title">비밀번호 재설정</h1>
 					</div>
 				</div>
 			</div>
@@ -51,74 +51,41 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<h1 class="mb60">아이디 / 비밀번호 찾기</h1>
+					<h1 class="mb60">비밀번호 재설정</h1>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-lg-8 col-md-8 col-sm-6 col-xs-12">
-					<form id="join_form" method="post">
-						<div class="row">
-							<!-- Textarea -->
-							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-								<!-- Text input 아이디-->
-								<div class="form-group">
-									<label class=" control-label" for="id">ID :</label>
-									 <input id="id_input" name="userid" type="text" class="form-control" placeholder="사용할 아이디를 입력해 주세요" autocomplete="off">
-										<span id="id_check"></span>
-									<!-- required 나중에 붙이기 -->
-								</div>
-							</div>
-							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-								<!-- Text input 비밀번호-->
-								<div class="form-group">
-									<label class=" control-label" for="password">PassWord :</label>
-									<input id="pw_input" name="userpw" type="password" class="form-control">
-									<span id="pw_check"></span>
-									<!-- required 나중에 붙이기 -->
-								</div>
-								<div class="form-group">
-									<label class=" control-label" for="password">Check your
-										Password :</label> <input id="pwck_input" name="pwck_input" type="password" class="form-control">
-										<span id="pwck_check"></span>
-									<!-- required 나중에 붙이기 -->
-								</div>
-							</div>
-							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-								<!-- Text input 이름-->
-								<div class="form-group">
-									<label class=" control-label" for="name">Name :</label> 
-									<input id="name_input" name="userName" type="text" class="form-control" placeholder="이름을 입력해주세요">
-										<span id="nm_check"></span>
-									<!-- required 나중에 붙이기 -->
-									<!-- <span class="final_name">이름을 입력해주세요</span> -->
-								</div>
-							</div>
-							<!-- Text input--> <!-- 인증번호 관련 기능 -->
-							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-								<div class="form-group">
-									<label class="control-label" for="receiveRn">Phone :</label>
-									
-									<input id="receiveRn" name="phone" type="text" class="form-control" placeholder="01012345678">
-									<button type="button" id="sendRn" name="singlebutton" class="btn btn-primary btn-sm">인증번호 발송</button>
-									<span id="noHi"></span>
-									
-									<input id="inputRn" name="Rn_chk" type="text" class="form-control" placeholder="인증번호 입력" style="margin-top:20px">
-									<button type="button" id="checkRn" name="singlebutton" class="btn btn-primary btn-sm">인증번호 확인</button>
-									<span id="numCheck"></span>
-									
-									<!-- required 나중에 붙이기 -->
-								</div>
-							</div>
-
-							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-								<!-- Button -->
-								<div class="join_button">
-									<sec:csrfInput/>
-									<button id="btn-join" name="singlebutton" class="btn btn-default">제출하기</button>
-								</div>
+					<div class="row">
+						<!-- Textarea -->
+						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+							<!-- Text input 아이디-->
+							<div class="form-group">
+								<label class=" control-label" for="id">ID :</label>
+								<input id="id-input" name="userid" type="text" class="form-control" placeholder="사용할 아이디를 입력해 주세요" autocomplete="off">
+								<span id="id-check"></span>
 							</div>
 						</div>
-					</form>
+						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+							<!-- Text input 비밀번호-->
+							<div class="form-group">
+								<label class=" control-label" for="password">PassWord :</label>
+								<input id="pw-input" name="userpw" type="password" class="form-control">
+								<span id="pw-check"></span>
+							</div>
+							<div class="form-group">
+								<label class=" control-label" for="password">Check your Password :</label> 
+								<input id="pwck-input" name="pwck-input" type="password" class="form-control">
+								<span id="pwck-check"></span>
+							</div>
+						</div>
+						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+							<!-- Button -->
+							<div class="join-button">
+								<button id="btn-setpw" name="singlebutton" class="btn btn-default">비밀번호 변경</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -137,155 +104,96 @@
 	
 	<!-- 토큰 -->
 	<script>
- 	var csrfHeader = $("meta[name='_csrf_header']").attr("content")
-	var csrfToken = $("meta[name='_csrf']").attr("content");
- 	console.log(csrfHeader);
- 	console.log(csrfToken	);
-	if(csrfHeader && csrfToken){
-		$(document).ajaxSend(function(e, xhr) {
-			xhr.setRequestHeader(csrfHeader, csrfToken);
-		});
-	}
+	 	var csrfHeader = $("meta[name='_csrf_header']").attr("content")
+		var csrfToken = $("meta[name='_csrf']").attr("content");
+	 	var csrfParameter = $("meta[name='_csrf_parameter']").attr("content");
+	 	var contextPath = "${pageContext.request.contextPath}";
+	 	
+		if(csrfHeader && csrfToken){
+			$(document).ajaxSend(function(e, xhr) {
+				xhr.setRequestHeader(csrfHeader, csrfToken);
+			});
+		}
     
-	    
-	    /* 아이디 유효성 검사 아이디 입력란에서 키업 이벤트마다 적용시키기*/
-	    $("#id_input").keyup(function() {
-    	  	invalidID($(this));
-	    });
-	    
-		$("#id_input").focus(function() {
-			invalidID($(this));
-		});
-	    
-	    function invalidID(target){
-	    	// 정규표현식을 이용해서 영어 소문자만, 첫글자 숫자제외 시키기
-    	  	var idReg = /^[a-z]+[a-z0-9]{5,19}$/g;
-        	if(!idReg.test(target.val())) {
-	            $("#id_check").text("아이디는 영문자로 시작하는 6~20자 영문자 또는 숫자이어야 합니다.");
-	            isInvalid_ID = false;
-        	}
-        	else {
-        		$("#id_check").text("");
-        		isInvalid_ID = true;
-        	}
-	    }
-	  
-	    
-	    /* 비밀번호 유효성 검사 */
-	    $("#pw_input").keyup(function() {
-    	  	invalidPW($(this));
-	    });
-	    $("#pw_input").blur(function() {
-	    	invalidPW($(this));
-	    });
-	    function invalidPW(target) {
-	    	if(!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{10,}$/.test(target.val())){
-    			$("#pw_check").text('숫자와 영문자 조합으로 10~15자리를 사용해야 합니다.');
-    			isInvalid_PW = false;
-    			drawPWCK();
-    		}
-	    	else {
-    			$("#pw_check").text('사용가능한 비밀번호 입니다.');
-    			isInvalid_PW = true;
-    			drawPWCK();
-	    	}
-	    }
-	    drawPWCK();
-	    function drawPWCK() {
-	    	if(isInvalid_PW){
-				$("#pwck_input").closest("div").css("display", "block");
-			}
-			else {
-				$("#pwck_input").closest("div").hide();
-				$("#pwck_input").val("");
-			}
-	    }
-	    /* 비밀번호 확인 일치 유효성 검사 */
-	   	$("#pwck_input").keyup(function() {
-	   		if($("#pw_input").val() === $(this).val()){
-	   			$("#pwck_check").text("확인되었습니다.");
-	   			isDblCheck_PW = true;
-	   		}
-	   		else {
-	   			$("#pwck_check").text("다시확인해주세요.");
-	   			isDblCheck_PW = false;
-	   		}
-	   	});
-	    /* 휴대폰 번호 유효성 검사 */ 
-	    $("#receiveRn").keyup(function() {
-	     var ph = /(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/g;
-	    	if($("#receiveRn").val().match(ph) != -1 ){
-	    		$("#noHi").text(" 특수문자 빼고 입력해주세요.")
-	    		isInvalid_PH = false;
-	    	}else {
-	    		$("#noHi").text("인증번호 발송을 눌러주세요.")
-	    		isInvalid_PH = true;
-	    	}
-		});
-	    
-	    // 휴대폰 인증번호 클릭시 인증api이용 문자메세지 전송.
-	    var checkNum = "";
-	    $("#sendRn").click(function() {
-	    	var url = "${pageContext.request.contextPath}" + "/common/sendSMS";
-	    	$.ajax(url , {
-	    		type: "POST",
-	    		data: $("#receiveRn").val(),
-	    		contentType : "application/text; charset=utf-8",
-	    		dataType : "json",
-	    		success : function(num) {
-	    			alert("sendSMS success");
-					checkNum = num;		
-					console.log(checkNum);
-					isReceive = true;
-	    		},
-	    		error : function() {
-	    			alert("sendSMS error");
-	    			isReceive = false;
-	    		}
-	    	})
-	    });
-	    
-	    // 휴대폰 인증번호 확인
-	    $("#checkRn").click(function() {
-	    	if(isReceive){
-	    		
-	    		if($("#inputRn").val() == checkNum){
-	    			$("#numCheck").text("인증이 완료되었습니다.");
-		    		alert("인증이 완료되었습니다.");
-		    		isPhoneChecked = true;
-		    	}
-	    		else{
-	    			$("#numCheck").text("인증번호를 다시확인 해주세요.");
-	    			alert("인증번호가 틀렸습니다.");
-	    			isPhoneChecked = false;
-	    		}
-	    	}
-	    	else {
-    			$("#numCheck").text("인증번호 발송버튼을 눌러주세요.");
-	    		alert("인증번호 발송버튼을 눌러주세요.");
-	    		isPhoneChecked = false;
-	    	}
-	    });
-	    // 비밀번호 초기화 한거 알리기
-	    $("#checkRn").click(function() {
-	    	if(isReceive){
-	    		
-	    		if($("#inputRn").val() == checkNum){
-	    			$("#numCheck").text("인증이 완료되었습니다.");
-		    		alert("인증이 완료되었습니다.");
-		    		isPhoneChecked = true;
-		    	}
-	    		else{
-	    			$("#numCheck").text("인증번호를 다시확인 해주세요.");
-	    			alert("인증번호가 틀렸습니다.");
-	    			isPhoneChecked = false;
-	    		}
-	    	}
-	    	else {
-    			$("#numCheck").text("인증번호 발송버튼을 눌러주세요.");
-	    		alert("인증번호 발송버튼을 눌러주세요.");
-	    		isPhoneChecked = false;
-	    	}
+	    $(function(){
+	    	// form태그 사용시 태그안에 csrf 토큰 추가
+			//$("#join_form").append("<input type='hidden' name='"+csrfParameter+"' value='"+csrfToken+"'/>");
+	    	
+		   	$("#btn-setpw").click(function(){
+		   		if(!validId($("#id-input").val())){
+		   			alert("아이디 검사에 실패했습니다.");
+		   			return;
+		   		}
+		   		
+		   		if(!pwDoubleCheck()){
+		   			alert("입력한 비밀번호가 일치 하지 않습니다!!!");
+					return;		   			
+		   		}
+		   		
+		   		// 비밀번호 변경 비동기통신
+		   		var url = contextPath + "/common/setpw";
+		   		$.ajax(url, {
+		   			type : "post",
+		   			data : JSON.stringify({
+		   				"userid" : $("#id-input").val(),
+		   				"userpw" : $("#pw-input").val()
+		   			}),
+		   			contentType : "application/json; charset=utf-8",
+		   			dataType : "text",
+		   			success : function(result){
+		   				alert("비밀번호 변경 완료");
+		   				location.href = contextPath + "/common/login";
+		   			},
+		   			error : function (){
+		   				alert("faill setpw ajax!!!")
+		   			}
+		   		});
+		   		
+		   	});
+		   	
+		   //존재하는 id인지 검사
+		   	function validId(inputId){
+		   		var url = contextPath + "/common/idCheck"
+		   		$.ajax(url, {
+		   			type : "post",
+		   			data : inputId,
+		   			contentType : "application/text; charset=utf-8",
+		   			dataType : "json",
+		   			success : function(result){
+						if(result < 1){
+							alert("존재하지 않는 ID 입니다.");
+							return false;
+						}
+						else {
+							return true;
+						}
+		   				
+		   			},
+		   			error : function(){
+		   				alert("validId Check ajax error!!!");
+		   				return false;
+		   			}
+		   		});
+		   		return true;
+		   	}
+			
+		 	// 비밀번호 더블체크
+		   	function pwDoubleCheck(){
+		   		var pwInput = $("#pw-input");
+		   		var pwckInput = $("#pwck-input");
+		   		
+		   		if(pwInput.val() == "" || pwckInput.val() == ""){
+		   			alert("비밀번호를 입력해주세요");
+		   			return false;
+		   		}
+		   		else if(pwInput.val() != pwckInput.val()){
+		   			return false;
+		   		}
+		   		else {
+		   			return true;
+		   		}
+		   	}
+		   	
 	    });
    																	
     </script>

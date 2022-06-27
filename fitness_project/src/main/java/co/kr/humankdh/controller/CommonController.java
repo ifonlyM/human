@@ -117,8 +117,8 @@ public class CommonController {
 	}
 	
 	// 아이디 중복체크
+	@PostMapping("/idCheck")
 	@ResponseBody
-	@PostMapping("/idChk")
 	public int idChk(@RequestBody String id) {
 		int result = service.idChk(id);
 		log.info("아이디중복체크 결과:" + result);
@@ -150,7 +150,6 @@ public class CommonController {
 		log.info("access Denied :" + auth);
 		
 		model.addAttribute("msg", "access Denied");
-		
 	}
 	
 	// 아이디 / 비밀번호 찾기 페이지 1
@@ -163,6 +162,19 @@ public class CommonController {
 	@GetMapping("findInfo")
 	public void findInfo(){
 		log.info("아이디 비밀번호 찾기 2 / 2");
+	}
+	
+	@PostMapping(value="setpw", produces="text/plain; charset=utf-8")
+	@ResponseBody
+	public String setpw(@RequestBody Map<String, String> data){
+		String userid = data.get("userid");
+		String userpw = data.get("userpw");
+		try{
+			service.setPw(userid, userpw);			
+		}catch (Exception e) {
+			return "비밀번호 변경 실패";
+		}
+		return "비빌번호 변경 성공";
 	}
 	
 	// 회원정보 수정 페이지 이동
@@ -229,11 +241,5 @@ public class CommonController {
 			service.remove(userid[i]);
 		}
 		return "redirect:/common/index";
-	}
-	
-	// 아이디 찾기
-	
-	
-	// 비밀번호 찾기
-	
+	}	
 }
