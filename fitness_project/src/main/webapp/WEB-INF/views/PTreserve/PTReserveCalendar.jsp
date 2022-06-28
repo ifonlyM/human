@@ -496,13 +496,20 @@
 					
 					// 이미 예약되어있는 시간대는 예약 불가능
 					//(서버에 해당날짜,트레이너id를 이용해 데이터들을 조회 하고 해당하는 시간대들과 예약시간 버튼과 매치시켜서 비활성화)
-					var url = contextPath + "/PTreserve/getTrainerReservedTime";
+					var url = contextPath + "/PTreserve/getTrainerReservedTimeBy";
 					$.ajax(url,{
 						type: "POST",
-						data: JSON.stringify(reserve),
+						data: JSON.stringify({
+							"trainerId" : "${param.trainerId}",
+							"reserveDate" : dayGrid.attr("data-date")
+						}),
 						contentType: "application/json; charset=utf-8",
-						dataType: "JSON",
+						dataType: "json",
 						success: function(reservedList) {
+							if(!reservedList[0]){
+								alert("해당일에는 트레이너의 예약이 없습니다!\n트레이너의 첫 PT 파트너가 되보세요!");
+								return;
+							}
 							for(var i in reservedList) {
 								var ti = timeInputs.end().find('input[data-time='+reservedList[i]+']');
 								if(ti.hasClass("btn-default")){
@@ -514,6 +521,7 @@
 							alert("fail!!! get Trainer Reserved Time ");
 						}
 					});
+					
 				}
    	    	});
         	

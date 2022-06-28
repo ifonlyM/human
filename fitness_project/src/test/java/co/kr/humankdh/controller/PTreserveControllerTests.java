@@ -9,6 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,13 +39,15 @@ import com.google.gson.Gson;
 
 import co.kr.humankdh.domain.MemberVo;
 import co.kr.humankdh.domain.TrainerCareerVo;
+import co.kr.humankdh.mapper.PTreserveMapperTests;
 import co.kr.humankdh.service.PTreserveService;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"file:src/main/webapp/WEB-INF/spring/root-context.xml", 
-		"file:src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml"})
+	"file:src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml"
+,"file:src/main/webapp/WEB-INF/spring/security-context.xml"})
 @Log4j
 @WebAppConfiguration
 public class PTreserveControllerTests {
@@ -256,6 +261,35 @@ public class PTreserveControllerTests {
 			.andDo(print())
 			.andExpect(content().string(strExpected)) // 예상 응답 데이터와 실제 데이터 비교
 			.andExpect(status().is(200));
+		
+	}
+	
+	/**
+	 * LocalDate를 이용한 날짜계산
+	 */
+	@Test
+	public void testDateCalc() {
+		LocalDateTime currDateTime = LocalDateTime.now();
+		
+		log.info("=======LocalDateTime Test========");
+		log.info("현재 날짜 및 시간 : "+ currDateTime);
+		
+		currDateTime = LocalDateTime.of(
+				currDateTime.getYear(), 
+				currDateTime.getMonthValue(),
+				currDateTime.getDayOfMonth(),
+				currDateTime.getHour(),
+				0);
+		LocalDateTime reserveDateTime = LocalDateTime.of(2022, 6, 28, 15, 0, 0);
+
+		Duration duration = Duration.between(currDateTime, reserveDateTime);
+		log.info("seconds : " + duration.getSeconds());
+		log.info("minutes : " + duration.getSeconds() / 60);
+		log.info("hour : " + duration.getSeconds() / 60 / 60);
+		
+		log.info("=========String Test=======");
+		String[] testStr = new String[]{"test1", "test2"};
+		log.info(testStr[0]+" "+ testStr[1]);
 		
 	}
 }

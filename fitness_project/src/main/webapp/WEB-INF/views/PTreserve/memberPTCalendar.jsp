@@ -503,14 +503,23 @@
 					type : "POST",
 					data : JSON.stringify(currDetail),
 					contentType : "application/json; charset=utf-8",
-					dataType : "text",
-					success : function(msg){
-						alert(msg);
-						// 예약  취소했던 버튼 삭제
-						$modal.find(".select-input").closest(".tbody-tRow").remove();
+					dataType : "json",
+					success : function(resultMap){
+						console.log(resultMap);
 						
-						// 하단 메세지 변경
-						$modal.find(".tfoot-title").text("선택한 예약을 취소할 수 있습니다.");
+						// 예약 취소가 가능한경우
+						if(resultMap["true"]){
+							alert(resultMap["true"]); // 예약취소 완료 메세지
+							
+							// 예약  취소했던 버튼 삭제
+							$modal.find(".select-input").closest(".tbody-tRow").remove();
+							
+							// 하단 메세지 변경
+							$modal.find(".tfoot-title").text("선택한 예약을 취소할 수 있습니다.");
+						}
+						else {
+							alert(resultMap["false"]); //예약취소 불가 메세지
+						}
 						
 					},
 					error : function(){

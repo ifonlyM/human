@@ -1,10 +1,13 @@
 package co.kr.humankdh.controller;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jdt.internal.compiler.ast.FalseLiteral;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -153,12 +156,12 @@ public class PT_ReserveController {
 	 * @param vo
 	 * @return 지정된 날짜의 트레이너 예약 시간 list
 	 */
-	@PostMapping("getTrainerReservedTimeBy")
+	/*@PostMapping("getTrainerReservedTimeBy")
 	@ResponseBody
 	public List<String> getTrainerReservedTimeBy(@RequestBody ReserveVo vo){
 		log.info(vo);
 		return service.getTrainerReservedTimeBy(vo.getTrainerId(), vo.getReserveDate());
-	}
+	}*/
 	
 	/**
 	 * 지정한 달의 트레이너 한명의 일별 예약 리스트를  가져옴
@@ -196,7 +199,7 @@ public class PT_ReserveController {
 		return dayListMap;
 	}
 	
-	@PostMapping("getTrainerReserveTimeBy")
+	@PostMapping("getTrainerReservedTimeBy")
 	@ResponseBody
 	public List<String> getTrainerReservedTimeBy(@RequestBody Map<String, String> data){
 		if(data == null) return null;
@@ -270,15 +273,48 @@ public class PT_ReserveController {
 		return service.getUserReserveDetailBy(userId, reserveDate, reserveTime);
 	}
 	
-	@PostMapping(value="reserveCancle", produces="text/plain; charset=utf-8")
+	@PostMapping(value="reserveCancle")
 	@ResponseBody
-	public String reserveCancle(@RequestBody ReserveVo vo){
-		service.reserveCancle(vo.getRno());
-		String date[] = vo.getReserveDate().split("-");
-		String resultMsg = date[0]+"년 "+date[1]+"월 "+date[2]+"일\n";
-		resultMsg += vo.getStartTime()+"시 예약을 취소했습니다.";
+	public Map<String, String> reserveCancle(@RequestBody ReserveVo vo){
+		// 현재 날짜,시간
+		LocalDateTime currDateTime = LocalDateTime.now(); 
+		currDateTime = LocalDateTime.of(
+				currDateTime.getYear(), 
+				currDateTime.getMonthValue(),
+				currDateTime.getDayOfMonth(),
+				currDateTime.getHour(),
+				0); // 현재시간을 00분으로 고정
 		
-		return resultMsg;
+		// view에서 받아온 예약날짜, 시간
+		String date[] = vo.getReserveDate().split("-"); // year, month, day
+		String time = vo.getStartTime().split(":")[0]; // hour
+		
+		// 예약 날짜,시간
+		LocalDateTime reserveDateTime = 
+				LocalDateTime.of(
+				Integer.valueOf(date[0]),
+				Integer.valueOf(date[1]),
+				Integer.valueOf(date[2]),
+				Integer.valueOf(time),
+				0); 
+		Duration duration = Duration.between(currDateTime, reserveDateTime);
+		
+		Map<String, String> resultMap = new HashMap<>();
+		String resultMsg  = date[0]+"년 "+date[1]+"월 "+date[2]+"일\n";
+		
+		// 과거 예약 데이터는 취소 불가능
+		if(duration.toHours() <= 0){
+			resultMsg += "예약은 과거 예약으로 취소가 불가능 합니다.";
+			resultMap.put("false", resultMsg);
+			return resultMap;
+		}
+		// 미래의 예약만 취소가능
+		else {
+			service.reserveCancle(vo.getRno());
+			resultMsg += vo.getStartTime()+"시 예약을 취소했습니다.";
+			resultMap.put("true", resultMsg);
+			return resultMap;
+		}
 	}
 
 }
