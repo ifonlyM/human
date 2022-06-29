@@ -6,6 +6,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 		<bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" id="BCryptPasswordEncoder"></bean>
 		<bean id="customAccessDenied" class="co.kr.humankdh.security.CustomAccessDeniedHandler"></bean>
+		<bean id="customInvalidSessionStrategy" class="co.kr.humankdh.security.CustomInvalidSessionStrategy"></bean>
 
 	<security:http>
 		<security:form-login login-page="/common/login"/>

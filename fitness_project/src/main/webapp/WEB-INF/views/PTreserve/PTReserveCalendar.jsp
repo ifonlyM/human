@@ -506,16 +506,15 @@
 						contentType: "application/json; charset=utf-8",
 						dataType: "json",
 						success: function(reservedList) {
-							if(!reservedList[0]){
-								alert("해당일에는 트레이너의 예약이 없습니다!\n트레이너의 첫 PT 파트너가 되보세요!");
-								return;
-							}
-							for(var i in reservedList) {
-								var ti = timeInputs.end().find('input[data-time='+reservedList[i]+']');
-								if(ti.hasClass("btn-default")){
-									disabledInput(ti, "reserved");									
+							if(reservedList[0]){
+								for(var i in reservedList) {
+									var ti = timeInputs.end().find('input[data-time='+reservedList[i]+']');
+									if(ti.hasClass("btn-default")){
+										disabledInput(ti, "reserved");									
+									}
 								}
 							}
+							
 						},
 						error : function(){
 							alert("fail!!! get Trainer Reserved Time ");

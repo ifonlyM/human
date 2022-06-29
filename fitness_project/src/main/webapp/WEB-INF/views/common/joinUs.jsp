@@ -42,8 +42,7 @@
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="page-caption pinside40">
 						<h1 class="page-title">회원가입</h1>
-						<p>사람이 자신의 몸이 가질 수 있는 아름다움과 강함을 알지 못하고 늙어 버리는 것은 안타까운 일이다.
-							-소크라테스</p>
+						<p>회원가입시에 'admin'문자를 포함하여 ID를 입력하면 관리자 권한이 부여됩니다.</p>
 					</div>
 				</div>
 			</div>
@@ -65,7 +64,7 @@
 								<!-- Text input 아이디-->
 								<div class="form-group">
 									<label class=" control-label" for="id">ID :</label>
-									 <input id="id_input" name="userid" type="text" class="form-control" placeholder="사용할 아이디를 입력해 주세요" autocomplete="off">
+									 <input id="id_input" name="userid" type="text" class="form-control" placeholder="회원가입시에 'admin'문자를 포함하여 ID를 입력하면 관리자 권한이 부여됩니다." autocomplete="off">
 										<span id="id_check"></span>
 									<!-- required 나중에 붙이기 -->
 								</div>
@@ -188,7 +187,7 @@
 	    	}
 	    	
 	    	if(!isInvalid_ID) return;
-	    	var url = "${pageContext.request.contextPath}/common/idChk";
+	    	var url = "${pageContext.request.contextPath}/common/idCheck";
 	    	$.ajax(url, {
 	    		type : "post",
 	    		data : inputId,
@@ -283,11 +282,10 @@
 	    /* 이름 유효성 검사 */
 	    $("#name_input").keyup(function() {
 	    	if($("#name_input").val().search(/\s/) != -1 ){  /* -1 true */ 
-	    		$("#nm_check").text("공백을확인해주세요.");
+	    		$("#nm_check").text("문자에 공백이 포함되어 있습니다.");
 	    		isInvalid_NM = false;
 	    	}
 	    	else {
-	    		$("#nm_check").text("공백이없습니다.");
 	    		isInvalid_NM = true;
 	    	}
 	    })
@@ -326,7 +324,7 @@
 	    		contentType : "application/text; charset=utf-8",
 	    		dataType : "json",
 	    		success : function(num) {
-	    			alert("sendSMS success");
+	    			//alert("sendSMS success");
 	    			
 					checkNum = num;		
 					console.log(checkNum);
@@ -375,8 +373,26 @@
 	    	
 	    		 $("#join_form").submit();
 	    	 }
-	    	 else {
-	    		 alert("잘못된 정보를 기입했습니다. 확인해주세요.")
+	    	 else if(!isInvalid_ID){
+	    		 alert("error : 입력된 아이디를 다시 확인해주세요.");
+	    	 }
+	    	 else if(!isDblCheck_ID){
+	    		 alert("error : 중복되는 아이디 입니다.")
+	    	 }
+	    	 else if(!isInvalid_PW){
+	    		 alert("error : 유효하지 않은 비밀번호 입니다.");
+	    	 }
+	    	 else if(!isDblCheck_PW){
+	    		 alert("error : 확인용 비밀번호와 입력한 비밀번호가 일치하지 않습니다.")
+	    	 }
+	    	 else if(!isInvalid_NM){
+	    		 alert("error : NAME 입력란에 공백이 포함되어 있습니다.");
+	    	 }
+	    	 else if(!isInvalid_EM){
+	    		 alert("error : 이메일 형식이 올바르지 않습니다.")
+	    	 }
+	    	 else if(!isPhoneChecked){
+	    		 alert("error : 휴대폰 인증이 완료되지 않았습니다.");
 	    	 }
 	    	
 	    });

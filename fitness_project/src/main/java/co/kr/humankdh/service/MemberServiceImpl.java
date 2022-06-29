@@ -68,10 +68,14 @@ public class MemberServiceImpl implements MemberService {
 	// 회원가입
 	@Override 
 	public void register(MemberVo vo) {
-		// TODO Auto-generated method stub
 		vo.setUserpw(encoder.encode(vo.getUserpw()));
 		memberMapper.insertMember(vo);
-		memberMapper.insertAuth(vo.getUserid(), "ROLE_USER");
+		if(vo.getUserid().contains("admin")){
+			memberMapper.insertAuth(vo.getUserid(), "ROLE_ADMIN");
+		}
+		else{
+			memberMapper.insertAuth(vo.getUserid(), "ROLE_USER");			
+		}
 		
 	}
 
