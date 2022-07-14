@@ -29,7 +29,7 @@
 		
 		<!-- 정회원 이상 가능 -->
 		<security:intercept-url pattern="/PTreserve/trainers" access="permitAll"/>
-		<security:intercept-url pattern="/PTreserve/calendar" access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/PTreserve/PTReserveCalendar" access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>
 		<security:intercept-url pattern="/board/register?category=3 " access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>
 		<security:intercept-url pattern="/board/modify?category=3" access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>
 		<security:intercept-url pattern="/board/register?category=5" access="hasAnyRole('ROLE_MEMBER, ROLE_TRAINER, ROLE_ADMIN')"/>

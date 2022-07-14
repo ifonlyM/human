@@ -298,10 +298,6 @@
             			console.log("${param.trainerName} 트레이너 이번달 일별 예약 시간대 리스트 :", reservedLinkedHashMap);
             			// 해당 트레이너의 일별 예약 시간대 리스트 맵 key: 일자, value: 예약 시간대 리스트
             			var map = reservedLinkedHashMap; 
-            			if(!map) {
-            				console.log("map null");
-            				return;
-            			}
             			
             			// 예약 버튼들
             			var reserveInputs = $modal.find(".tModal-tbody input"); 
@@ -309,6 +305,22 @@
             			
             			// 현재 시간
             			var nowHour = new Date().getHours();
+            			
+            			// 예약 리스트가 없으면 오늘 지나간 시간대만 stack그리기
+            			if(isEmptyObj(map)) {
+            				alert(map[0]);
+            				var pastTimeLength = nowHour + 1 - reserveInputs.eq(0).attr("data-time");
+            				if(pastTimeLength < 0) pastTimeLength = 0;
+            				
+            				var percent = pastTimeLength / validAllTimeLength;
+            				percent *= 100;
+            				
+            				$calendar.find(".fc-day-today")
+            					.css({
+           							"background" : "linear-gradient(to top, #b9e118 "+percent+"%, white "+percent+"%)"
+            					});
+            				return;
+            			}
             			
             			// 날짜 별로 예약이 얼마나 차있는지 캘린더 daygrid의 배경색에 스택효과를 주는건 어떨까..?
             			for(var day in map){
@@ -339,16 +351,12 @@
             							}
             							
             							// 예약된 시간대들을 기준으로 이미 지난 시간들은 빼주고, 총 예약가능 시간대 갯수에서 이미 지난 시간은 더해준다. 
-            							percent = 
-            								(map[day].length - invalidReservedTimeCnt + pastTimeLength) / validAllTimeLength;
-            							percent = percent * 100;
-            							
-            							console.log(map[day].length, invalidReservedTimeCnt, pastTimeLength, validAllTimeLength)
+            							percent = (map[day].length - invalidReservedTimeCnt + pastTimeLength) / validAllTimeLength;
+            							percent *= 100;
             						}
             						else {
             							percent = (map[day].length / validAllTimeLength) * 100;            							
             						}
-            						
             						
             						// 배경의 그라디언트를 이용해 스택효과를 내보았음
             						matchGrid
